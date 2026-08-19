@@ -76,8 +76,7 @@ def normalize_payload(payload: dict, manifest: dict) -> pd.DataFrame:
     return pd.DataFrame([row])
 
 
-@app.get('/')
-def health():
+def health_payload():
     try:
         _, manifest = load_bundle()
         return {
@@ -90,8 +89,7 @@ def health():
         raise HTTPException(status_code=503, detail=str(exc))
 
 
-@app.post('/')
-def predict(payload: dict):
+def prediction_payload(payload: dict):
     if payload.get('research_acknowledged') is not True:
         raise HTTPException(
             status_code=400,
@@ -126,3 +124,15 @@ def predict(payload: dict):
             'must not be used for diagnosis, treatment, discharge, or autonomous clinical decisions.'
         )
     }
+
+
+@app.get('/')
+@app.get('/api/predict')
+def health():
+    return health_payload()
+
+
+@app.post('/')
+@app.post('/api/predict')
+def predict(payload: dict):
+    return prediction_payload(payload)
