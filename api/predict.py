@@ -33,6 +33,27 @@ GLOBAL_DRIVER_FIELDS = [
     'discharge_disposition_id', 'medical_specialty', 'number_emergency', 'age'
 ]
 
+SMOKE_TEST_PAYLOAD = {
+    'research_acknowledged': True,
+    'age': '[60-70)',
+    'gender': 'Male',
+    'number_inpatient': 2,
+    'number_emergency': 1,
+    'number_outpatient': 0,
+    'time_in_hospital': 4,
+    'num_medications': 15,
+    'number_diagnoses': 7,
+    'diag_1': '428',
+    'diag_2': '250.4',
+    'diag_3': '401',
+    'discharge_disposition_id': 1,
+    'admission_type_id': 1,
+    'admission_source_id': 7,
+    'diabetesMed': 'Yes',
+    'insulin': 'Steady',
+    'change': 'No'
+}
+
 
 @lru_cache(maxsize=1)
 def load_bundle():
@@ -128,35 +149,12 @@ def prediction_payload(payload: dict):
 
 @app.get('/')
 @app.get('/api/predict')
-def health():
+def health(demo: int = 0):
+    if demo == 1:
+        result = prediction_payload(SMOKE_TEST_PAYLOAD)
+        result['smoke_test'] = True
+        return result
     return health_payload()
-
-
-@app.get('/api/predict/demo')
-def smoke_test_prediction():
-    payload = {
-        'research_acknowledged': True,
-        'age': '[60-70)',
-        'gender': 'Male',
-        'number_inpatient': 2,
-        'number_emergency': 1,
-        'number_outpatient': 0,
-        'time_in_hospital': 4,
-        'num_medications': 15,
-        'number_diagnoses': 7,
-        'diag_1': '428',
-        'diag_2': '250.4',
-        'diag_3': '401',
-        'discharge_disposition_id': 1,
-        'admission_type_id': 1,
-        'admission_source_id': 7,
-        'diabetesMed': 'Yes',
-        'insulin': 'Steady',
-        'change': 'No'
-    }
-    result = prediction_payload(payload)
-    result['smoke_test'] = True
-    return result
 
 
 @app.post('/')
