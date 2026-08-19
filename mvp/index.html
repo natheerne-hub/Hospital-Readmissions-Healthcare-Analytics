@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suliaman HealthData AI | Readmission Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div><strong>Suliaman HealthData AI</strong><span>Readmission Intelligence</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="overview">Overview</button>
+        <button class="nav-item" data-view="signals">Hospital Signals</button>
+        <button class="nav-item" data-view="quality">Data Quality</button>
+        <button class="nav-item" data-view="model">Model Readiness</button>
+        <button class="nav-item" data-view="methodology">Methodology</button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot"></span>
+        Evidence-first MVP
+        <small>CMS HRRP FY 2026 aggregate data. Not for clinical decision-making.</small>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Healthcare Analytics MVP</p>
+          <h1>Hospital Readmission Intelligence</h1>
+          <p class="subtitle">A transparent, audit-ready view of 30-day readmission performance signals.</p>
+        </div>
+        <div class="badges">
+          <span class="badge">FY 2026 HRRP</span>
+          <span class="badge badge-safe">De-identified public data</span>
+        </div>
+      </header>
+
+      <section id="overview" class="view active-view">
+        <div class="callout">
+          <strong>What this MVP does today:</strong> analyzes hospital-level readmission performance using CMS HRRP measures. It does <em>not</em> produce individual patient risk predictions because the current source dataset is aggregate, not patient-level.
+        </div>
+        <div class="kpi-grid">
+          <article class="card kpi"><span>Hospitals</span><strong>3,055</strong><small>Unique facilities</small></article>
+          <article class="card kpi"><span>Hospital-condition records</span><strong>18,330</strong><small>Across six HRRP conditions</small></article>
+          <article class="card kpi"><span>Valid ERR records</span><strong>11,720</strong><small>Records with reportable ERR</small></article>
+          <article class="card kpi"><span>ERR above 1</span><strong>48.1%</strong><small>Performance signal, not quality ranking</small></article>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="card-head"><div><p class="eyebrow">Condition profile</p><h2>30-day readmission signal</h2></div><span class="chip">6 conditions</span></div>
+            <div class="bars" id="conditionBars"></div>
+            <p class="footnote">Illustrative bar lengths are UI placeholders until the cleaned analysis export is wired into the app. Published findings remain sourced from the reproducible analysis.</p>
+          </article>
+          <article class="card">
+            <div class="card-head"><div><p class="eyebrow">Interpretation</p><h2>Excess Readmission Ratio (ERR)</h2></div></div>
+            <div class="err-scale">
+              <div><strong>&lt; 1.0</strong><span>Fewer readmissions than model-expected</span></div>
+              <div><strong>≈ 1.0</strong><span>Near model-expected readmission level</span></div>
+              <div><strong>&gt; 1.0</strong><span>More readmissions than model-expected</span></div>
+            </div>
+            <div class="warning"><strong>Important:</strong> ERR is a risk-adjusted HRRP performance signal. It is not a complete hospital quality score and does not establish causation.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="signals" class="view">
+        <div class="section-heading"><p class="eyebrow">Hospital-level analytics</p><h2>Persistent readmission signals</h2><p>Screen for facilities with consistent ERR patterns across at least five reported HRRP conditions.</p></div>
+        <div class="kpi-grid compact">
+          <article class="card kpi"><span>Persistent high-ERR</span><strong>75</strong><small>ERR &gt; 1 across all reported conditions</small></article>
+          <article class="card kpi"><span>Persistent low-ERR</span><strong>98</strong><small>ERR &lt; 1 across all reported conditions</small></article>
+          <article class="card kpi"><span>Minimum coverage</span><strong>5</strong><small>Reported clinical conditions</small></article>
+        </div>
+        <article class="card">
+          <div class="card-head"><div><p class="eyebrow">Interactive demo</p><h2>Hospital signal explorer</h2></div></div>
+          <div class="form-row">
+            <label>Hospital<select id="hospitalSelect"></select></label>
+            <label>Mean ERR<input id="meanErr" readonly /></label>
+            <label>Conditions reported<input id="conditionCount" readonly /></label>
+          </div>
+          <div id="signalResult" class="result-card"></div>
+          <p class="footnote">The three hospital examples in this explorer are synthetic UI records. They demonstrate product behavior without implying real facility performance.</p>
+        </article>
+      </section>
+
+      <section id="quality" class="view">
+        <div class="section-heading"><p class="eyebrow">Trust layer</p><h2>Data quality controls</h2><p>The product treats missing and suppressed values as meaningful data states rather than silently replacing them.</p></div>
+        <div class="quality-grid">
+          <article class="card"><strong>Duplicates</strong><span class="metric good">0</span><p>Duplicate rows reported in the source analysis.</p></article>
+          <article class="card"><strong>Suppressed readmissions</strong><span class="metric neutral">Preserved</span><p>“Too Few to Report” remains suppressed/not-reported, never converted to zero.</p></article>
+          <article class="card"><strong>Valid ERR coverage</strong><span class="metric">11,720 / 18,330</span><p>Analysis uses measure-specific valid subsets to avoid false denominators.</p></article>
+          <article class="card"><strong>Date handling</strong><span class="metric good">Typed</span><p>Start and end dates are converted to datetime fields during preparation.</p></article>
+        </div>
+      </section>
+
+      <section id="model" class="view">
+        <div class="section-heading"><p class="eyebrow">AI readiness</p><h2>Patient-level model status</h2><p>We separate what is proven today from what requires a new validation dataset.</p></div>
+        <div class="model-status card">
+          <div class="status-row"><span>Hospital-level analytics engine</span><strong class="ready">READY</strong></div>
+          <div class="status-row"><span>Patient-level 30-day risk model</span><strong class="pending">PENDING DATASET</strong></div>
+          <div class="status-row"><span>External validation on Dubai population</span><strong class="pending">SANDBOX PHASE</strong></div>
+          <div class="status-row"><span>Clinical deployment claim</span><strong class="blocked">NOT CLAIMED</strong></div>
+        </div>
+        <article class="card">
+          <h3>Target validation metrics</h3>
+          <div class="metric-list">
+            <span>ROC-AUC</span><span>PR-AUC</span><span>Sensitivity</span><span>Specificity</span><span>Precision</span><span>F1</span><span>Brier score</span><span>Calibration</span>
+          </div>
+          <p>Thresholds will be selected from validation results and the intended clinical/operational use case, never chosen just to make a percentage look high.</p>
+        </article>
+      </section>
+
+      <section id="methodology" class="view">
+        <div class="section-heading"><p class="eyebrow">Auditability</p><h2>How every number is produced</h2></div>
+        <article class="card pipeline">
+          <div>Raw CMS HRRP data</div><span>→</span><div>Data audit</div><span>→</span><div>Missingness interpretation</div><span>→</span><div>Clinical mapping</div><span>→</span><div>Valid analytical subsets</div><span>→</span><div>KPIs & signals</div><span>→</span><div>MVP</div>
+        </article>
+        <div class="grid-2">
+          <article class="card"><h3>Design principle</h3><p>No unexplained score appears in the interface. Each KPI must trace back to a defined source field, transformation, denominator, and interpretation rule.</p></article>
+          <article class="card"><h3>Safety principle</h3><p>The public MVP is decision-support analytics only. It must not present itself as a diagnostic device or as a validated individual clinical prediction system until appropriate validation is completed.</p></article>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
