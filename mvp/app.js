@@ -10,23 +10,84 @@ navItems.forEach((button) => {
   });
 });
 
-const conditionDemo = [
-  ['Heart Failure', 84, 'Highest'],
-  ['COPD', 77, 'High'],
-  ['Pneumonia', 69, 'Moderate'],
-  ['AMI', 63, 'Moderate'],
-  ['Hip/Knee', 43, 'Lower'],
-  ['CABG', 38, 'Lower'],
-];
+function fmt(value, digits = 0) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
+  return Number(value).toLocaleString(undefined, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
+}
 
-const bars = document.getElementById('conditionBars');
-conditionDemo.forEach(([name, width, label]) => {
-  const row = document.createElement('div');
-  row.className = 'bar-row';
-  row.innerHTML = `<span>${name}</span><div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div><strong>${label}</strong>`;
-  bars.appendChild(row);
-});
+function renderConditionEvidence(data) {
+  const container = document.getElementById('conditionBars');
+  container.innerHTML = '';
 
+  if (Array.isArray(data.conditions) && data.conditions.length) {
+    const validRates = data.conditions
+      .map((row) => Number(row.mean_predicted_rate))
+      .filter((value) => Number.isFinite(value));
+    const maxRate = Math.max(...validRates, 1);
+
+    data.conditions.forEach((row) => {
+      const rate = Number(row.mean_predicted_rate);
+      const width = Number.isFinite(rate) ? Math.max(4, (rate / maxRate) * 100) : 0;
+      const line = document.createElement('div');
+      line.className = 'bar-row';
+      line.innerHTML = `<span>${row.condition}</span><div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div><strong>${Number.isFinite(rate) ? `${fmt(rate, 2)}%` : '—'}</strong>`;
+      container.appendChild(line);
+    });
+    return;
+  }
+
+  (data.condition_findings || []).forEach((finding) => {
+    const line = document.createElement('div');
+    line.className = 'evidence-line';
+    line.textContent = finding;
+    container.appendChild(line);
+  });
+}
+
+function renderHrrpData(data) {
+  const kpiCards = document.querySelectorAll('#overview .kpi-grid .kpi strong');
+  const k = data.kpis || {};
+  if (kpiCards.length >= 4) {
+    kpiCards[0].textContent = fmt(k.hospitals);
+    kpiCards[1].textContent = fmt(k.records);
+    kpiCards[2].textContent = fmt(k.valid_err_records);
+    kpiCards[3].textContent = `${fmt(k.err_above_1_pct, 1)}%`;
+  }
+
+  const signalCards = document.querySelectorAll('#signals .kpi-grid .kpi strong');
+  if (signalCards.length >= 3) {
+    signalCards[0].textContent = fmt(k.persistent_high_err_hospitals);
+    signalCards[1].textContent = fmt(k.persistent_low_err_hospitals);
+    signalCards[2].textContent = fmt(k.persistent_signal_min_conditions);
+  }
+
+  const qualityMetrics = document.querySelectorAll('#quality .metric');
+  if (qualityMetrics.length >= 3) {
+    qualityMetrics[0].textContent = fmt(k.duplicate_rows);
+    qualityMetrics[2].textContent = `${fmt(k.valid_err_records)} / ${fmt(k.records)}`;
+  }
+
+  renderConditionEvidence(data);
+}
+
+async function loadHrrpData() {
+  try {
+    const response = await fetch('data/hrrp_summary.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    renderHrrpData(data);
+  } catch (error) {
+    const container = document.getElementById('conditionBars');
+    container.innerHTML = '<div class="warning"><strong>Data asset unavailable.</strong> Run <code>python mvp/build_mvp_data.py</code> from the repository root to regenerate the traceable HRRP summary.</div>';
+    console.error('Unable to load HRRP MVP data:', error);
+  }
+}
+
+// These records are intentionally synthetic. They demonstrate UX behavior only;
+// no real hospital is represented and no patient-level prediction is implied.
 const hospitals = [
   { name: 'Demo Medical Center A', err: 1.087, conditions: 6 },
   { name: 'Demo Regional Hospital B', err: 0.968, conditions: 5 },
@@ -51,9 +112,10 @@ function renderHospital() {
   conditionCount.value = hospital.conditions;
   let label = 'Near expected';
   let explanation = 'Mean ERR is close to 1.0. Treat this as a screening signal, not a quality verdict.';
+
   if (hospital.err > 1.05) {
     label = 'Elevated readmission signal';
-    explanation = 'Mean ERR is above 1.05 in this synthetic demo record. A real review would drill into condition-level coverage, confidence, reporting completeness, and operational context.';
+    explanation = 'Mean ERR is above 1.05 in this synthetic demo record. A real review would drill into condition coverage, reporting completeness, and operational context.';
   } else if (hospital.err < 0.98) {
     label = 'Lower readmission signal';
     explanation = 'Mean ERR is below 0.98 in this synthetic demo record. This still does not establish superior overall hospital quality.';
@@ -63,3 +125,4 @@ function renderHospital() {
 
 select.addEventListener('change', renderHospital);
 renderHospital();
+loadHrrpData();
