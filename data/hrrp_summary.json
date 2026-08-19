@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "provenance_status": "verified repository analysis snapshot; regenerate with mvp/build_mvp_data.py when source CSV is present",
+  "source": {"publisher": "Centers for Medicare & Medicaid Services (CMS)","dataset": "Hospital Readmissions Reduction Program (HRRP), FY 2026","reporting_period": {"start": "2021-07-01","end": "2024-06-30"},"unit_of_analysis": "hospital-condition record"},
+  "kpis": {"records": 18330,"hospitals": 3055,"states_territories": 51,"conditions": 6,"valid_err_records": 11720,"mean_err": 1.002,"median_err": 0.997,"err_above_1_pct": 48.1,"duplicate_rows": 0,"persistent_high_err_hospitals": 75,"persistent_low_err_hospitals": 98,"persistent_signal_min_conditions": 5},
+  "condition_findings": ["Heart Failure had the highest mean predicted 30-day readmission rate in the repository analysis.","COPD had the second-highest mean predicted 30-day readmission rate.","Exact condition-level rates are intentionally omitted from this snapshot until regenerated directly from the source CSV."],
+  "definitions": {"err": "Predicted readmission rate divided by expected readmission rate under CMS HRRP methodology.","persistent_high_err": "Hospital with at least five reportable conditions and ERR > 1 for every reported condition.","persistent_low_err": "Hospital with at least five reportable conditions and ERR < 1 for every reported condition."},
+  "guardrails": ["ERR is a hospital-level risk-adjusted performance signal, not a complete quality score.","Missing or suppressed values are not converted to zero.","This CMS dataset cannot support individual patient readmission probabilities."]
+}
