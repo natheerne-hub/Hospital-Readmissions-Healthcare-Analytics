@@ -1,0 +1,46 @@
+name: Publish Research Model Runtime
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-research-model-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download validated model artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/model-bundle runtime/model
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9367469737/zip > /tmp/model-bundle.zip
+          unzip -o /tmp/model-bundle.zip -d /tmp/model-bundle
+          cp /tmp/model-bundle/readmission_research_model.joblib runtime/model/readmission_research_model.joblib
+          cp /tmp/model-bundle/readmission_research_model_manifest.json runtime/model/readmission_research_model_manifest.json
+          test -s runtime/model/readmission_research_model.joblib
+          test -s runtime/model/readmission_research_model_manifest.json
+
+      - name: Commit exact validated runtime bundle
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add runtime/model/readmission_research_model.joblib runtime/model/readmission_research_model_manifest.json
+          if git diff --cached --quiet; then
+            echo 'Runtime model bundle already current.'
+          else
+            git commit -m 'Publish validated research model runtime bundle'
+            git push origin main
+          fi
