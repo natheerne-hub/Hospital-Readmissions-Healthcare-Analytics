@@ -86,8 +86,6 @@ async function loadHrrpData() {
   }
 }
 
-// These records are intentionally synthetic. They demonstrate UX behavior only;
-// no real hospital is represented and no patient-level prediction is implied.
 const hospitals = [
   { name: 'Demo Medical Center A', err: 1.087, conditions: 6 },
   { name: 'Demo Regional Hospital B', err: 0.968, conditions: 5 },
@@ -125,4 +123,67 @@ function renderHospital() {
 
 select.addEventListener('change', renderHospital);
 renderHospital();
+
+let modelRegistry = null;
+
+async function loadModelRegistry() {
+  const response = await fetch('../modeling/model_registry.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Model registry HTTP ${response.status}`);
+  modelRegistry = await response.json();
+  return modelRegistry;
+}
+
+function unitMatches(model, unit) {
+  if (model.unit_of_analysis === unit) return true;
+  if (model.id === 'dubai-nabidh-external-validation' && unit === 'authorized Dubai sandbox data') return true;
+  return false;
+}
+
+function evaluateRoute() {
+  const task = document.getElementById('taskSelect').value;
+  const unit = document.getElementById('unitSelect').value;
+  const status = document.getElementById('routeStatus');
+  const output = document.getElementById('routeResult');
+
+  if (!modelRegistry) {
+    status.value = 'REGISTRY UNAVAILABLE';
+    output.innerHTML = '<strong>Routing blocked</strong><p>The model registry has not loaded, so the platform will not guess a model.</p>';
+    return;
+  }
+
+  const candidates = modelRegistry.models.filter((model) => model.task === task);
+  const model = candidates.find((candidate) => unitMatches(candidate, unit));
+
+  if (!model) {
+    status.value = 'NO VALID ROUTE';
+    output.innerHTML = `<strong>No compatible model</strong><p>No registered model matches both the requested task and the selected data unit. The platform will not mix datasets or substitute a different model to manufacture a result.</p>`;
+    return;
+  }
+
+  if (task === 'hospital_level_readmission_intelligence') {
+    status.value = 'ANALYTICS READY';
+    output.innerHTML = `<strong>Route: ${model.id}</strong><p>Use ${model.data_source} for hospital-level KPIs and performance signals. Patient probability is not permitted from this evidence layer.</p>`;
+    return;
+  }
+
+  if (model.patient_probability_allowed === true) {
+    status.value = 'PROBABILITY ENABLED';
+    output.innerHTML = `<strong>Route: ${model.id}</strong><p>This registered model is explicitly unlocked for probability output. The response must still include model version, population, validation status, and limitations.</p>`;
+    return;
+  }
+
+  status.value = 'OUTPUT LOCKED';
+  const reason = model.unlock_rule || 'The registered model is not currently approved for probability output.';
+  output.innerHTML = `<strong>Route identified: ${model.id}</strong><p>${reason}</p><p><b>Current status:</b> ${model.status}. No patient risk percentage will be shown.</p>`;
+}
+
+document.getElementById('routeButton').addEventListener('click', evaluateRoute);
+
+loadModelRegistry()
+  .then(() => evaluateRoute())
+  .catch((error) => {
+    console.error('Unable to load model registry:', error);
+    evaluateRoute();
+  });
+
 loadHrrpData();
