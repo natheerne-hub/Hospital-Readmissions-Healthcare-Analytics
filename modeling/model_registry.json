@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "product": "Suliaman HealthData AI Readmission Intelligence",
+  "routing_policy": "Never combine incompatible datasets at inference time. Route each request only to a validated model whose population, outcome, prediction time, and required features match the request.",
+  "models": [
+    {
+      "id": "cms-hrrp-hospital-intelligence-v1",
+      "status": "analytics_ready",
+      "task": "hospital_level_readmission_intelligence",
+      "data_source": "CMS HRRP FY 2026",
+      "unit_of_analysis": "hospital-condition record",
+      "output": "hospital performance signals and KPIs",
+      "patient_probability_allowed": false
+    },
+    {
+      "id": "uci-diabetes-readmission-baseline-v1",
+      "status": "training_pipeline_ready_metrics_pending",
+      "task": "patient_30_day_readmission_probability",
+      "data_source": "UCI Diabetes 130-US Hospitals 1999-2008",
+      "unit_of_analysis": "patient encounter",
+      "population": "hospital encounters in the UCI diabetes dataset",
+      "outcome": "readmitted <30 days vs other outcomes",
+      "prediction_time": "using features available for the eligible encounter before outcome",
+      "patient_probability_allowed": false,
+      "unlock_rule": "Only enable public probabilities after reproducible training, untouched test evaluation, calibration review, and artifact publication."
+    },
+    {
+      "id": "dubai-nabidh-external-validation",
+      "status": "future_authorized_sandbox_only",
+      "task": "external_validation_and_local_calibration",
+      "data_source": "authorized Dubai/NABIDH sandbox data",
+      "unit_of_analysis": "to be defined by approved pilot dataset",
+      "patient_probability_allowed": false,
+      "unlock_rule": "Requires sandbox authorization, semantic mapping, local validation and governance approval."
+    }
+  ]
+}
