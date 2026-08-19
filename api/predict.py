@@ -132,6 +132,33 @@ def health():
     return health_payload()
 
 
+@app.get('/api/predict/demo')
+def smoke_test_prediction():
+    payload = {
+        'research_acknowledged': True,
+        'age': '[60-70)',
+        'gender': 'Male',
+        'number_inpatient': 2,
+        'number_emergency': 1,
+        'number_outpatient': 0,
+        'time_in_hospital': 4,
+        'num_medications': 15,
+        'number_diagnoses': 7,
+        'diag_1': '428',
+        'diag_2': '250.4',
+        'diag_3': '401',
+        'discharge_disposition_id': 1,
+        'admission_type_id': 1,
+        'admission_source_id': 7,
+        'diabetesMed': 'Yes',
+        'insulin': 'Steady',
+        'change': 'No'
+    }
+    result = prediction_payload(payload)
+    result['smoke_test'] = True
+    return result
+
+
 @app.post('/')
 @app.post('/api/predict')
 def predict(payload: dict):
