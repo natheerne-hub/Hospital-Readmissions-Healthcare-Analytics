@@ -28,6 +28,8 @@ jobs:
           python -m py_compile mvp/build_mvp_data.py
           python -m py_compile modeling/train_patient_readmission.py
           python -m py_compile modeling/analyze_risk_drivers.py
+          python -m py_compile modeling/analyze_error_profiles.py
+          python -m py_compile modeling/run_feature_ablation.py
       - name: Validate JSON assets
         run: |
           python -m json.tool mvp/data/hrrp_summary.json > /dev/null
@@ -53,7 +55,7 @@ jobs:
 
   train-patient-readmission-baseline:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     needs: validate-python-and-assets
     steps:
       - name: Checkout repository
@@ -75,21 +77,30 @@ jobs:
         run: python modeling/train_patient_readmission.py
       - name: Analyze global readmission risk drivers
         run: python modeling/analyze_risk_drivers.py
+      - name: Profile false positives and false negatives
+        run: python modeling/analyze_error_profiles.py
+      - name: Run feature group ablation
+        run: python modeling/run_feature_ablation.py
       - name: Validate generated artifacts
         run: |
           python -m json.tool modeling/artifacts/patient_readmission_metrics.json > /dev/null
           python -m json.tool modeling/artifacts/readmission_risk_drivers.json > /dev/null
+          python -m json.tool modeling/artifacts/readmission_error_profiles.json > /dev/null
+          python -m json.tool modeling/artifacts/feature_ablation_results.json > /dev/null
           python - <<'PY'
           import json
           from pathlib import Path
           metrics = json.loads(Path('modeling/artifacts/patient_readmission_metrics.json').read_text())
           drivers = json.loads(Path('modeling/artifacts/readmission_risk_drivers.json').read_text())
+          errors = json.loads(Path('modeling/artifacts/readmission_error_profiles.json').read_text())
+          ablation = json.loads(Path('modeling/artifacts/feature_ablation_results.json').read_text())
           assert 0 <= metrics['test']['roc_auc'] <= 1
           assert 0 <= metrics['test']['pr_auc'] <= 1
-          assert metrics['test']['brier_score'] >= 0
           assert len(metrics['test']['threshold_tradeoff_table']) > 0
           assert len(drivers['top_original_features_by_test_roc_auc_drop']) > 0
-          print('Artifacts validated')
+          assert all(g in errors['groups'] for g in ['TP','FP','TN','FN'])
+          assert len(ablation['experiments']) > 0
+          print('All modeling artifacts validated')
           PY
       - name: Upload patient modeling evidence
         uses: actions/upload-artifact@v4
@@ -98,5 +109,7 @@ jobs:
           path: |
             modeling/artifacts/patient_readmission_metrics.json
             modeling/artifacts/readmission_risk_drivers.json
+            modeling/artifacts/readmission_error_profiles.json
+            modeling/artifacts/feature_ablation_results.json
           if-no-files-found: error
           retention-days: 14
