@@ -18,6 +18,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -27,8 +32,13 @@ jobs:
           python -m py_compile mvp/build_mvp_data.py
           python -m py_compile modeling/train_patient_readmission.py
 
-      - name: Validate MVP JSON asset
-        run: python -m json.tool mvp/data/hrrp_summary.json > /dev/null
+      - name: Validate JSON assets
+        run: |
+          python -m json.tool mvp/data/hrrp_summary.json > /dev/null
+          python -m json.tool modeling/model_registry.json > /dev/null
+
+      - name: Validate MVP JavaScript syntax
+        run: node --check mvp/app.js
 
       - name: Guard against invented patient metrics
         run: |
@@ -36,3 +46,14 @@ jobs:
             echo 'Hard-coded patient model performance detected in public MVP.'
             exit 1
           fi
+
+      - name: Guard locked patient model
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          registry = json.loads(Path('modeling/model_registry.json').read_text())
+          patient = next(m for m in registry['models'] if m['task'] == 'patient_30_day_readmission_probability')
+          if patient['status'] != 'validated_for_probability_output' and patient.get('patient_probability_allowed') is True:
+              raise SystemExit('Patient probability is enabled without validated registry status.')
+          PY
