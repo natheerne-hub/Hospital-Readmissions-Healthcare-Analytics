@@ -1,0 +1,109 @@
+const views = document.querySelectorAll('.view');
+const navItems = document.querySelectorAll('.nav-item');
+
+navItems.forEach((button) => {
+  button.addEventListener('click', () => {
+    navItems.forEach((item) => item.classList.remove('active'));
+    views.forEach((view) => view.classList.remove('active-view'));
+    button.classList.add('active');
+    document.getElementById(button.dataset.view).classList.add('active-view');
+  });
+});
+
+function fmt(value, digits = 0) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
+  return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+function pct(value, digits = 1) { return `${fmt(Number(value) * 100, digits)}%`; }
+
+function renderConditionEvidence(data) {
+  const container = document.getElementById('conditionBars');
+  container.innerHTML = '';
+  if (Array.isArray(data.conditions) && data.conditions.length) {
+    const validRates = data.conditions.map((row) => Number(row.mean_predicted_rate)).filter(Number.isFinite);
+    const maxRate = Math.max(...validRates, 1);
+    data.conditions.forEach((row) => {
+      const rate = Number(row.mean_predicted_rate);
+      const width = Number.isFinite(rate) ? Math.max(4, (rate / maxRate) * 100) : 0;
+      const line = document.createElement('div'); line.className = 'bar-row';
+      line.innerHTML = `<span>${row.condition}</span><div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div><strong>${Number.isFinite(rate) ? `${fmt(rate, 2)}%` : '—'}</strong>`;
+      container.appendChild(line);
+    });
+    return;
+  }
+  (data.condition_findings || []).forEach((finding) => { const line = document.createElement('div'); line.className = 'evidence-line'; line.textContent = finding; container.appendChild(line); });
+}
+
+function renderHrrpData(data) {
+  const kpiCards = document.querySelectorAll('#overview .kpi-grid .kpi strong'); const k = data.kpis || {};
+  if (kpiCards.length >= 4) { kpiCards[0].textContent = fmt(k.hospitals); kpiCards[1].textContent = fmt(k.records); kpiCards[2].textContent = fmt(k.valid_err_records); kpiCards[3].textContent = `${fmt(k.err_above_1_pct, 1)}%`; }
+  const signalCards = document.querySelectorAll('#signals .kpi-grid .kpi strong');
+  if (signalCards.length >= 3) { signalCards[0].textContent = fmt(k.persistent_high_err_hospitals); signalCards[1].textContent = fmt(k.persistent_low_err_hospitals); signalCards[2].textContent = fmt(k.persistent_signal_min_conditions); }
+  const qualityMetrics = document.querySelectorAll('#quality .metric');
+  if (qualityMetrics.length >= 3) { qualityMetrics[0].textContent = fmt(k.duplicate_rows); qualityMetrics[2].textContent = `${fmt(k.valid_err_records)} / ${fmt(k.records)}`; }
+  renderConditionEvidence(data);
+}
+
+async function loadHrrpData() {
+  try { const response = await fetch('data/hrrp_summary.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`HTTP ${response.status}`); renderHrrpData(await response.json()); }
+  catch (error) { document.getElementById('conditionBars').innerHTML = '<div class="warning"><strong>Data asset unavailable.</strong> Regenerate the traceable HRRP summary from the repository pipeline.</div>'; console.error(error); }
+}
+
+function renderPatientEvidence(data) {
+  const t = data.test || {};
+  document.getElementById('patientAuc').textContent = fmt(t.roc_auc, 4);
+  document.getElementById('patientPrauc').textContent = fmt(t.pr_auc, 4);
+  document.getElementById('patientSensitivity').textContent = pct(t.sensitivity, 1);
+  document.getElementById('patientSpecificity').textContent = pct(t.specificity, 1);
+  document.getElementById('patientThreshold').textContent = `Research threshold ${fmt(t.threshold, 2)}`;
+  document.getElementById('cmTp').textContent = fmt(t.tp); document.getElementById('cmFp').textContent = fmt(t.fp);
+  document.getElementById('cmFn').textContent = fmt(t.fn); document.getElementById('cmTn').textContent = fmt(t.tn);
+  document.getElementById('patientLockReason').textContent = data.reason_locked;
+  document.getElementById('alertBurden').innerHTML = `<strong>Alert burden:</strong> ${fmt(t.alerts_per_100_encounters, 2)} alerts per 100 encounters; ${fmt(t.false_positive_alerts_per_100_encounters, 2)} are false-positive alerts. ${fmt(t.missed_readmissions_per_100_encounters, 2)} true readmissions are missed per 100 encounters at the research threshold.`;
+  const drivers = document.getElementById('riskDrivers'); drivers.innerHTML = '';
+  const max = Math.max(...data.top_risk_drivers.map((r) => r.roc_auc_drop_mean), 0.001);
+  data.top_risk_drivers.forEach((row, index) => {
+    const item = document.createElement('div'); item.className = 'driver-row';
+    const width = Math.max(3, (row.roc_auc_drop_mean / max) * 100);
+    item.innerHTML = `<span><b>${index + 1}</b> ${row.feature}</span><div class="driver-track"><div class="driver-fill" style="width:${width}%"></div></div><strong>${fmt(row.roc_auc_drop_mean, 4)}</strong>`;
+    drivers.appendChild(item);
+  });
+}
+
+async function loadPatientEvidence() {
+  try { const response = await fetch('data/model_evidence.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`HTTP ${response.status}`); renderPatientEvidence(await response.json()); }
+  catch (error) { document.getElementById('patientLockReason').textContent = 'Model evidence asset unavailable; patient output remains locked.'; console.error(error); }
+}
+
+const hospitals = [
+  { name: 'Demo Medical Center A', err: 1.087, conditions: 6 },
+  { name: 'Demo Regional Hospital B', err: 0.968, conditions: 5 },
+  { name: 'Demo Community Hospital C', err: 1.012, conditions: 6 },
+];
+const select = document.getElementById('hospitalSelect'); const meanErr = document.getElementById('meanErr'); const conditionCount = document.getElementById('conditionCount'); const result = document.getElementById('signalResult');
+hospitals.forEach((hospital, index) => { const option = document.createElement('option'); option.value = index; option.textContent = hospital.name; select.appendChild(option); });
+function renderHospital() {
+  const hospital = hospitals[Number(select.value)]; meanErr.value = hospital.err.toFixed(3); conditionCount.value = hospital.conditions;
+  let label = 'Near expected'; let explanation = 'Mean ERR is close to 1.0. Treat this as a screening signal, not a quality verdict.';
+  if (hospital.err > 1.05) { label = 'Elevated readmission signal'; explanation = 'Mean ERR is above 1.05 in this synthetic demo record. A real review would drill into condition coverage, reporting completeness, and operational context.'; }
+  else if (hospital.err < 0.98) { label = 'Lower readmission signal'; explanation = 'Mean ERR is below 0.98 in this synthetic demo record. This still does not establish superior overall hospital quality.'; }
+  result.innerHTML = `<strong>${label}</strong><p>${explanation}</p>`;
+}
+select.addEventListener('change', renderHospital); renderHospital();
+
+let modelRegistry = null;
+async function loadModelRegistry() { const response = await fetch('../modeling/model_registry.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`Model registry HTTP ${response.status}`); modelRegistry = await response.json(); return modelRegistry; }
+function unitMatches(model, unit) { if (model.unit_of_analysis === unit) return true; return model.id === 'dubai-nabidh-external-validation' && unit === 'authorized Dubai sandbox data'; }
+function evaluateRoute() {
+  const task = document.getElementById('taskSelect').value; const unit = document.getElementById('unitSelect').value; const status = document.getElementById('routeStatus'); const output = document.getElementById('routeResult');
+  if (!modelRegistry) { status.value = 'REGISTRY UNAVAILABLE'; output.innerHTML = '<strong>Routing blocked</strong><p>The model registry has not loaded, so the platform will not guess a model.</p>'; return; }
+  const model = modelRegistry.models.filter((m) => m.task === task).find((m) => unitMatches(m, unit));
+  if (!model) { status.value = 'NO VALID ROUTE'; output.innerHTML = '<strong>No compatible model</strong><p>No registered model matches both the task and data unit. The platform will not mix datasets or substitute another model to manufacture a result.</p>'; return; }
+  if (task === 'hospital_level_readmission_intelligence') { status.value = 'ANALYTICS READY'; output.innerHTML = `<strong>Route: ${model.id}</strong><p>Use ${model.data_source} for hospital-level KPIs and performance signals. Patient probability is not permitted from this layer.</p>`; return; }
+  if (model.patient_probability_allowed === true) { status.value = 'PROBABILITY ENABLED'; output.innerHTML = `<strong>Route: ${model.id}</strong><p>Probability output is explicitly unlocked in the registry.</p>`; return; }
+  status.value = 'OUTPUT LOCKED'; output.innerHTML = `<strong>Route identified: ${model.id}</strong><p>${model.unlock_rule || 'Probability output is locked.'}</p><p><b>Current status:</b> ${model.status}. No public/clinical patient risk percentage will be shown.</p>`;
+}
+document.getElementById('routeButton').addEventListener('click', evaluateRoute);
+
+loadModelRegistry().then(evaluateRoute).catch((error) => { console.error(error); evaluateRoute(); });
+loadHrrpData(); loadPatientEvidence();

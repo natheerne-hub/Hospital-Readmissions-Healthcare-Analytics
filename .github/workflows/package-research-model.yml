@@ -1,0 +1,58 @@
+name: Package Research Readmission Model
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  package-and-smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Download official UCI dataset
+        run: |
+          mkdir -p data
+          curl -L --fail --retry 3 'https://archive.ics.uci.edu/static/public/296/diabetes+130-us+hospitals+for+years+1999-2008.zip' -o /tmp/uci.zip
+          unzip -o /tmp/uci.zip -d /tmp/uci
+          cp /tmp/uci/diabetic_data.csv data/diabetic_data.csv
+      - name: Package selected research model
+        run: python modeling/package_research_model.py
+      - name: Smoke-test guarded inference
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'modeling')
+          from train_patient_readmission import load_data, make_patient_group_splits, prepare_xy
+          from research_predictor import predict_research_encounter
+          df=load_data(); _,_,test=make_patient_group_splits(df)
+          X,_,dropped=prepare_xy(test)
+          payload={k:(None if str(v)=='nan' else v) for k,v in X.iloc[0].to_dict().items()}
+          out=predict_research_encounter(payload)
+          assert 0 <= out['research_probability'] <= 1
+          assert out['public_patient_probability_allowed'] is False
+          print(out)
+          PY
+      - name: Validate manifest and public lock
+        run: |
+          python -m json.tool modeling/artifacts/readmission_research_model_manifest.json > /dev/null
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('modeling/artifacts/readmission_research_model_manifest.json').read_text())
+          assert m['public_patient_probability_allowed'] is False
+          assert m['model_id']=='uci-diabetes-histgb-research-v2'
+          PY
+      - name: Upload packaged model bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: readmission-research-model-bundle
+          path: |
+            modeling/artifacts/readmission_research_model.joblib
+            modeling/artifacts/readmission_research_model_manifest.json
+          retention-days: 14
