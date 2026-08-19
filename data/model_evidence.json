@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "source_workflow_run": 32257389355,
+  "source_commit": "2473beb1243a7352fbdfd22fcbb4a78ab2f7266c",
+  "model_id": "uci-diabetes-readmission-hgb-v2",
+  "model_family": "HistGradientBoostingClassifier",
+  "feature_variant": "full",
+  "status": "research_candidate_selected_probability_locked",
+  "validation": {"roc_auc": 0.6759,"pr_auc": 0.2240,"brier_score": 0.0940},
+  "test": {"roc_auc": 0.6815,"pr_auc": 0.2286,"brier_score": 0.0905,"threshold": 0.13,"sensitivity": 0.5113,"specificity": 0.7372,"precision": 0.1889,"f1": 0.2759,"tp": 1109,"fp": 4762,"tn": 13358,"fn": 1060,"false_positive_rate": 0.2628,"false_discovery_rate": 0.8111,"alerts_per_100_encounters": 28.94,"false_positive_alerts_per_100_encounters": 23.47,"missed_readmissions_per_100_encounters": 5.22},
+  "baseline_comparison": {"baseline_model": "class-weighted logistic regression","baseline_roc_auc": 0.6382,"baseline_pr_auc": 0.1913,"baseline_fn": 1260,"baseline_fp": 4329},
+  "top_risk_drivers": [{"feature":"number_inpatient","roc_auc_drop_mean":0.0518},{"feature":"diag_1","roc_auc_drop_mean":0.0161},{"feature":"diag_2","roc_auc_drop_mean":0.0091},{"feature":"diag_3","roc_auc_drop_mean":0.0059},{"feature":"discharge_disposition_id","roc_auc_drop_mean":0.0058},{"feature":"medical_specialty","roc_auc_drop_mean":0.0044},{"feature":"number_emergency","roc_auc_drop_mean":0.0035},{"feature":"age","roc_auc_drop_mean":0.0034}],
+  "clinical_status": "research MVP only; not clinically validated or deployment-ready",
+  "public_probability_allowed": false,
+  "reason_locked": "False-positive burden remains high; subgroup assessment, intended-use calibration, external validation, and governance review are still required."
+}
