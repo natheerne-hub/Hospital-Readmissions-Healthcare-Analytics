@@ -57,3 +57,54 @@ jobs:
           if patient['status'] != 'validated_for_probability_output' and patient.get('patient_probability_allowed') is True:
               raise SystemExit('Patient probability is enabled without validated registry status.')
           PY
+
+  train-patient-readmission-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: validate-python-and-assets
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install modeling dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download official UCI dataset
+        run: |
+          mkdir -p data
+          curl -L --fail --retry 3 \
+            'https://archive.ics.uci.edu/static/public/296/diabetes+130-us+hospitals+for+years+1999-2008.zip' \
+            -o /tmp/uci-diabetes.zip
+          unzip -o /tmp/uci-diabetes.zip -d /tmp/uci-diabetes
+          cp /tmp/uci-diabetes/diabetic_data.csv data/diabetic_data.csv
+          test -s data/diabetic_data.csv
+
+      - name: Train patient-level baseline
+        run: python modeling/train_patient_readmission.py
+
+      - name: Validate generated metrics artifact
+        run: |
+          python -m json.tool modeling/artifacts/patient_readmission_metrics.json > /dev/null
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          metrics = json.loads(Path('modeling/artifacts/patient_readmission_metrics.json').read_text())
+          assert metrics['test']['roc_auc'] >= 0 and metrics['test']['roc_auc'] <= 1
+          assert metrics['test']['pr_auc'] >= 0 and metrics['test']['pr_auc'] <= 1
+          assert metrics['test']['brier_score'] >= 0
+          assert 0 <= metrics['test']['threshold_metrics']['threshold'] <= 1
+          print(json.dumps(metrics, indent=2))
+          PY
+
+      - name: Upload patient model metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: patient-readmission-baseline-metrics
+          path: modeling/artifacts/patient_readmission_metrics.json
+          if-no-files-found: error
+          retention-days: 14
