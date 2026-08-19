@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "product": "Suliaman HealthData AI Readmission Intelligence",
   "routing_policy": "Never combine incompatible datasets at inference time. Route each request only to a validated model whose population, outcome, prediction time, and required features match the request.",
   "models": [
@@ -13,16 +13,39 @@
       "patient_probability_allowed": false
     },
     {
-      "id": "uci-diabetes-readmission-baseline-v1",
-      "status": "training_pipeline_ready_metrics_pending",
+      "id": "uci-diabetes-readmission-hgb-v2",
+      "status": "research_candidate_selected_probability_locked",
       "task": "patient_30_day_readmission_probability",
       "data_source": "UCI Diabetes 130-US Hospitals 1999-2008",
       "unit_of_analysis": "patient encounter",
       "population": "hospital encounters in the UCI diabetes dataset",
       "outcome": "readmitted <30 days vs other outcomes",
       "prediction_time": "using features available for the eligible encounter before outcome",
+      "model_family": "HistGradientBoostingClassifier",
+      "feature_variant": "full",
+      "selection_basis": "selected on validation ROC-AUC with PR-AUC and Brier reviewed; final test evaluated once after selection",
+      "validation_metrics": {
+        "roc_auc": 0.6759,
+        "pr_auc": 0.224,
+        "brier_score": 0.094
+      },
+      "test_metrics": {
+        "roc_auc": 0.6815,
+        "pr_auc": 0.2286,
+        "brier_score": 0.0905,
+        "threshold": 0.13,
+        "sensitivity": 0.5113,
+        "specificity": 0.7372,
+        "precision": 0.1889,
+        "f1": 0.2759,
+        "false_positive_rate": 0.2628,
+        "false_discovery_rate": 0.8111,
+        "alerts_per_100_encounters": 28.94,
+        "false_positive_alerts_per_100_encounters": 23.47,
+        "missed_readmissions_per_100_encounters": 5.22
+      },
       "patient_probability_allowed": false,
-      "unlock_rule": "Only enable public probabilities after reproducible training, untouched test evaluation, calibration review, and artifact publication."
+      "unlock_rule": "Do not enable public or clinical patient probabilities until calibration is reviewed for intended use, operational alert burden is reduced to an acceptable predefined level, subgroup performance is assessed, and external validation/governance approval is completed."
     },
     {
       "id": "dubai-nabidh-external-validation",
