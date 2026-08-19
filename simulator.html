@@ -6,18 +6,16 @@
   <title>Patient Risk Simulator | Suliaman HealthData AI</title>
   <link rel="stylesheet" href="/styles.css" />
   <style>
-    .sim-wrap{max-width:1050px;margin:0 auto;padding:28px 18px 60px}.sim-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.sim-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.sim-grid label{min-width:0}.sim-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}.ack{display:flex;gap:8px;align-items:flex-start;color:var(--muted);font-size:12px;line-height:1.5}.ack input{width:auto;margin-top:3px}.sim-result{margin-top:18px}.risk-number{font-size:42px;font-weight:900;margin:8px 0}.signal{display:inline-block;padding:7px 11px;border-radius:999px;border:1px solid var(--line);font-size:12px}.back{color:var(--accent2);text-decoration:none}.research-note{border:1px solid #5c4725;background:#241d11;padding:14px;border-radius:12px;color:#e9c98f;line-height:1.55;margin-bottom:16px}.loader{opacity:.7}.driver-values{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.driver-values span{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#102235;font-size:12px}@media(max-width:760px){.sim-grid{grid-template-columns:1fr 1fr}.sim-head{display:block}}@media(max-width:520px){.sim-grid{grid-template-columns:1fr}.risk-number{font-size:34px}}
+    .sim-wrap{max-width:1050px;margin:0 auto;padding:28px 18px 60px}.sim-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.sim-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.sim-grid label{min-width:0}.sim-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}.ack{display:flex;gap:8px;align-items:flex-start;color:var(--muted);font-size:12px;line-height:1.5}.ack input{width:auto;margin-top:3px}.sim-result{margin-top:18px}.risk-number{font-size:42px;font-weight:900;margin:8px 0}.signal{display:inline-block;padding:7px 11px;border-radius:999px;border:1px solid var(--line);font-size:12px}.back{color:var(--accent2);text-decoration:none}.research-note{border:1px solid #5c4725;background:#241d11;padding:14px;border-radius:12px;color:#e9c98f;line-height:1.55;margin-bottom:16px}.loader{opacity:.7}.driver-values{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.driver-values span{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#102235;font-size:12px}.field-help{font-size:10px;color:var(--muted)}@media(max-width:760px){.sim-grid{grid-template-columns:1fr 1fr}.sim-head{display:block}}@media(max-width:520px){.sim-grid{grid-template-columns:1fr}.risk-number{font-size:34px}}
   </style>
 </head>
 <body>
   <main class="sim-wrap">
     <div class="sim-head">
-      <div><p class="eyebrow">Research-only patient inference</p><h1>30-Day Readmission Simulator</h1><p class="subtitle">Enter a test or de-identified encounter. The request is sent to the packaged HistGradientBoosting research model.</p></div>
+      <div><p class="eyebrow">Research-only patient inference</p><h1>30-Day Readmission Simulator</h1><p class="subtitle">Enter a test or de-identified encounter. Diagnosis names are converted internally to the ICD-9 values expected by the research model.</p></div>
       <a class="back" href="/">← Back to MVP</a>
     </div>
-
-    <div class="research-note"><strong>Important:</strong> This is a technical research demonstration, not a clinical prediction tool. Do not enter names, medical record numbers, phone numbers, dates of birth, or other identifying information. Do not use the result for diagnosis, treatment, or discharge decisions.</div>
-
+    <div class="research-note"><strong>Important:</strong> This is a technical research demonstration, not a clinical prediction tool. Do not enter identifying information. Diagnosis choices below are simplified demo mappings to ICD-9 values used by the historical UCI dataset.</div>
     <form id="riskForm" class="card">
       <div class="sim-grid">
         <label>Age group<select name="age" required><option value="">Select</option><option>[20-30)</option><option>[30-40)</option><option>[40-50)</option><option>[50-60)</option><option>[60-70)</option><option>[70-80)</option><option>[80-90)</option><option>[90-100)</option></select></label>
@@ -28,9 +26,9 @@
         <label>Length of stay (days)<input name="time_in_hospital" type="number" min="1" max="14" step="1" required value="3" /></label>
         <label>Number of medications<input name="num_medications" type="number" min="0" step="1" required value="10" /></label>
         <label>Number of diagnoses<input name="number_diagnoses" type="number" min="1" step="1" required value="5" /></label>
-        <label>Primary diagnosis code<input name="diag_1" placeholder="e.g. 428" required /></label>
-        <label>Secondary diagnosis code<input name="diag_2" placeholder="e.g. 250.4" /></label>
-        <label>Third diagnosis code<input name="diag_3" placeholder="e.g. 401" /></label>
+        <label>Primary diagnosis<select name="diag_1" required><option value="">Select diagnosis</option><option value="428">Heart failure</option><option value="250.4">Diabetes with renal manifestations</option><option value="401">Hypertension</option><option value="414">Coronary atherosclerosis</option><option value="410">Acute myocardial infarction</option><option value="486">Pneumonia</option><option value="491">Chronic bronchitis / COPD-related</option><option value="584">Acute kidney failure</option><option value="599">Urinary tract disorder / UTI-related</option><option value="786">Chest pain / respiratory symptom</option></select><span class="field-help">The model receives the corresponding historical ICD-9 code.</span></label>
+        <label>Secondary diagnosis<select name="diag_2"><option value="">None / unknown</option><option value="428">Heart failure</option><option value="250.4">Diabetes with renal manifestations</option><option value="401">Hypertension</option><option value="414">Coronary atherosclerosis</option><option value="410">Acute myocardial infarction</option><option value="486">Pneumonia</option><option value="491">Chronic bronchitis / COPD-related</option><option value="584">Acute kidney failure</option><option value="599">Urinary tract disorder / UTI-related</option><option value="786">Chest pain / respiratory symptom</option></select></label>
+        <label>Additional diagnosis<select name="diag_3"><option value="">None / unknown</option><option value="428">Heart failure</option><option value="250.4">Diabetes with renal manifestations</option><option value="401">Hypertension</option><option value="414">Coronary atherosclerosis</option><option value="410">Acute myocardial infarction</option><option value="486">Pneumonia</option><option value="491">Chronic bronchitis / COPD-related</option><option value="584">Acute kidney failure</option><option value="599">Urinary tract disorder / UTI-related</option><option value="786">Chest pain / respiratory symptom</option></select></label>
         <label>Discharge disposition ID<input name="discharge_disposition_id" type="number" min="1" step="1" value="1" /></label>
         <label>Admission type ID<input name="admission_type_id" type="number" min="1" step="1" value="1" /></label>
         <label>Admission source ID<input name="admission_source_id" type="number" min="1" step="1" value="7" /></label>
@@ -38,12 +36,8 @@
         <label>Diabetes medication<select name="diabetesMed"><option>Yes</option><option>No</option></select></label>
         <label>Medication changed<select name="change"><option>No</option><option>Ch</option></select></label>
       </div>
-      <div class="sim-actions">
-        <button class="primary-button" type="submit">Run research model</button>
-        <label class="ack"><input id="ack" type="checkbox" required /> <span>I understand this is research-only and I am using test/de-identified data.</span></label>
-      </div>
+      <div class="sim-actions"><button class="primary-button" type="submit">Run research model</button><label class="ack"><input id="ack" type="checkbox" required /> <span>I understand this is research-only and I am using test/de-identified data.</span></label></div>
     </form>
-
     <section id="simResult" class="card sim-result" hidden></section>
   </main>
   <script src="/simulator.js"></script>
