@@ -12,41 +12,34 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
       - name: Compile Python modules
         run: |
           python -m py_compile analysis/hospital_readmissions_analysis.py
           python -m py_compile mvp/build_mvp_data.py
           python -m py_compile modeling/train_patient_readmission.py
-
+          python -m py_compile modeling/analyze_risk_drivers.py
       - name: Validate JSON assets
         run: |
           python -m json.tool mvp/data/hrrp_summary.json > /dev/null
           python -m json.tool modeling/model_registry.json > /dev/null
-
       - name: Validate MVP JavaScript syntax
         run: node --check mvp/app.js
-
       - name: Guard against invented patient metrics
         run: |
           if grep -R -E 'ROC-AUC: [0-9]|PR-AUC: [0-9]|Accuracy: [0-9]' mvp/; then
             echo 'Hard-coded patient model performance detected in public MVP.'
             exit 1
           fi
-
       - name: Guard locked patient model
         run: |
           python - <<'PY'
@@ -60,51 +53,50 @@ jobs:
 
   train-patient-readmission-baseline:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     needs: validate-python-and-assets
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install modeling dependencies
         run: pip install -r requirements.txt
-
       - name: Download official UCI dataset
         run: |
           mkdir -p data
-          curl -L --fail --retry 3 \
-            'https://archive.ics.uci.edu/static/public/296/diabetes+130-us+hospitals+for+years+1999-2008.zip' \
-            -o /tmp/uci-diabetes.zip
+          curl -L --fail --retry 3 'https://archive.ics.uci.edu/static/public/296/diabetes+130-us+hospitals+for+years+1999-2008.zip' -o /tmp/uci-diabetes.zip
           unzip -o /tmp/uci-diabetes.zip -d /tmp/uci-diabetes
           cp /tmp/uci-diabetes/diabetic_data.csv data/diabetic_data.csv
           test -s data/diabetic_data.csv
-
       - name: Train patient-level baseline
         run: python modeling/train_patient_readmission.py
-
-      - name: Validate generated metrics artifact
+      - name: Analyze global readmission risk drivers
+        run: python modeling/analyze_risk_drivers.py
+      - name: Validate generated artifacts
         run: |
           python -m json.tool modeling/artifacts/patient_readmission_metrics.json > /dev/null
+          python -m json.tool modeling/artifacts/readmission_risk_drivers.json > /dev/null
           python - <<'PY'
           import json
           from pathlib import Path
           metrics = json.loads(Path('modeling/artifacts/patient_readmission_metrics.json').read_text())
-          assert metrics['test']['roc_auc'] >= 0 and metrics['test']['roc_auc'] <= 1
-          assert metrics['test']['pr_auc'] >= 0 and metrics['test']['pr_auc'] <= 1
+          drivers = json.loads(Path('modeling/artifacts/readmission_risk_drivers.json').read_text())
+          assert 0 <= metrics['test']['roc_auc'] <= 1
+          assert 0 <= metrics['test']['pr_auc'] <= 1
           assert metrics['test']['brier_score'] >= 0
-          assert 0 <= metrics['test']['threshold_metrics']['threshold'] <= 1
-          print(json.dumps(metrics, indent=2))
+          assert len(metrics['test']['threshold_tradeoff_table']) > 0
+          assert len(drivers['top_original_features_by_test_roc_auc_drop']) > 0
+          print('Artifacts validated')
           PY
-
-      - name: Upload patient model metrics
+      - name: Upload patient modeling evidence
         uses: actions/upload-artifact@v4
         with:
-          name: patient-readmission-baseline-metrics
-          path: modeling/artifacts/patient_readmission_metrics.json
+          name: patient-readmission-modeling-evidence
+          path: |
+            modeling/artifacts/patient_readmission_metrics.json
+            modeling/artifacts/readmission_risk_drivers.json
           if-no-files-found: error
           retention-days: 14
