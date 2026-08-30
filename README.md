@@ -21,6 +21,7 @@ Hospital-level HRRP signals are never presented as patient-level risk. The UCI r
 
 The responsive web app includes:
 
+- A Python-generated hospital analytics dashboard with traceable JSON output
 - Executive hospital-level KPIs and condition comparisons
 - State and hospital exploration
 - Transparent data-quality and interpretation notes
@@ -85,6 +86,7 @@ The browser never combines the two datasets into a single inference. Each layer 
 ├── simulator.html, simulator.js       # Research simulator
 ├── api/predict.py                      # Guarded prediction endpoint
 ├── analysis/                           # CMS HRRP analysis workflow
+├── dashboard.js                        # Python-dashboard browser renderer
 ├── modeling/                           # UCI training and evaluation pipeline
 ├── runtime/model/                      # Versioned research artifact and manifest
 ├── data/                               # Data documentation and derived web assets
@@ -108,6 +110,16 @@ Open `http://localhost:8000`. To run the prediction API locally, install `requir
 - Descriptive associations do not establish causation.
 - Patient-model explanations describe model behavior, not clinical causes.
 - The patient model is restricted to research/demo use and has no local-health-system validation.
+
+## Rebuild the Python dashboard
+
+The public dashboard separates computation from presentation. Python derives the published metrics, and JavaScript only renders the versioned JSON output.
+
+```bash
+python analysis/build_python_dashboard.py
+```
+
+This regenerates `data/python_dashboard.json` and its MVP mirror from the verified HRRP summary.
 
 ## Author
 

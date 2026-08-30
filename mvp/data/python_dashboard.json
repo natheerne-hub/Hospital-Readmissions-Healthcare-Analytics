@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-08-30T13:09:58.208642+00:00",
+  "generated_by": "analysis/build_python_dashboard.py",
+  "source": {
+    "publisher": "Centers for Medicare & Medicaid Services (CMS)",
+    "dataset": "Hospital Readmissions Reduction Program (HRRP), FY 2026",
+    "reporting_period": {
+      "start": "2021-07-01",
+      "end": "2024-06-30"
+    },
+    "unit_of_analysis": "hospital-condition record"
+  },
+  "headline_kpis": [
+    {
+      "label": "Hospitals",
+      "value": 3055,
+      "display": "3,055"
+    },
+    {
+      "label": "Valid ERR records",
+      "value": 11720,
+      "display": "11,720"
+    },
+    {
+      "label": "Mean ERR",
+      "value": 1.002,
+      "display": "1.002"
+    },
+    {
+      "label": "ERR above 1",
+      "value": 48.1,
+      "display": "48.1%"
+    }
+  ],
+  "reporting_coverage": {
+    "reportable_pct": 63.9,
+    "not_reportable_pct": 36.1,
+    "valid_records": 11720,
+    "total_records": 18330
+  },
+  "err_distribution": {
+    "above_1_pct": 48.1,
+    "at_or_below_1_pct": 51.9
+  },
+  "persistent_signals": {
+    "high": 75,
+    "low": 98,
+    "minimum_conditions": 5
+  },
+  "condition_insights": [
+    "Heart Failure had the highest mean predicted 30-day readmission rate in the repository analysis.",
+    "COPD had the second-highest mean predicted 30-day readmission rate.",
+    "Exact condition-level rates are intentionally omitted from this snapshot until regenerated directly from the source CSV."
+  ],
+  "interpretation": {
+    "primary": "Predicted readmission rate divided by expected readmission rate under CMS HRRP methodology.",
+    "guardrails": [
+      "ERR is a hospital-level risk-adjusted performance signal, not a complete quality score.",
+      "Missing or suppressed values are not converted to zero.",
+      "This CMS dataset cannot support individual patient readmission probabilities."
+    ]
+  }
+}
