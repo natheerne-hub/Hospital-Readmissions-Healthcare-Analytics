@@ -22,6 +22,7 @@ Hospital-level HRRP signals are never presented as patient-level risk. The UCI r
 The responsive web app includes:
 
 - A Python-generated hospital analytics dashboard with traceable JSON output
+- An interactive US state map colored by mean Excess Readmission Ratio
 - Executive hospital-level KPIs and condition comparisons
 - State and hospital exploration
 - Transparent data-quality and interpretation notes
@@ -120,6 +121,8 @@ python analysis/build_python_dashboard.py
 ```
 
 This regenerates `data/python_dashboard.json` and its MVP mirror from the verified HRRP summary.
+
+The state layer is generated from `data/state_readmission_summary.csv`, an aggregation of the official [CMS Hospital Readmissions Reduction Program FY 2026 dataset](https://data.cms.gov/provider-data/dataset/9n3s-kdb3).
 
 ## Author
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at_utc": "2026-08-30T13:09:58.208642+00:00",
+  "generated_at_utc": "2026-08-30T13:15:54.284177+00:00",
   "generated_by": "analysis/build_python_dashboard.py",
   "source": {
     "publisher": "Centers for Medicare & Medicaid Services (CMS)",
@@ -47,6 +47,565 @@
     "high": 75,
     "low": 98,
     "minimum_conditions": 5
+  },
+  "state_map": {
+    "metric": "Mean Excess Readmission Ratio (ERR)",
+    "national_mean_err": 1.002,
+    "states": [
+      {
+        "state": "MA",
+        "mean_err": 1.034,
+        "median_err": 1.031,
+        "min_err": 0.594,
+        "max_err": 1.566,
+        "hospitals": 52,
+        "valid_records": 240
+      },
+      {
+        "state": "NJ",
+        "mean_err": 1.028,
+        "median_err": 1.028,
+        "min_err": 0.686,
+        "max_err": 1.424,
+        "hospitals": 61,
+        "valid_records": 272
+      },
+      {
+        "state": "FL",
+        "mean_err": 1.023,
+        "median_err": 1.014,
+        "min_err": 0.743,
+        "max_err": 1.52,
+        "hospitals": 164,
+        "valid_records": 771
+      },
+      {
+        "state": "IL",
+        "mean_err": 1.019,
+        "median_err": 1.014,
+        "min_err": 0.83,
+        "max_err": 1.583,
+        "hospitals": 109,
+        "valid_records": 491
+      },
+      {
+        "state": "MS",
+        "mean_err": 1.014,
+        "median_err": 1.011,
+        "min_err": 0.761,
+        "max_err": 1.305,
+        "hospitals": 50,
+        "valid_records": 185
+      },
+      {
+        "state": "AL",
+        "mean_err": 1.014,
+        "median_err": 1.005,
+        "min_err": 0.819,
+        "max_err": 1.385,
+        "hospitals": 67,
+        "valid_records": 247
+      },
+      {
+        "state": "WV",
+        "mean_err": 1.012,
+        "median_err": 1.007,
+        "min_err": 0.782,
+        "max_err": 1.303,
+        "hospitals": 22,
+        "valid_records": 95
+      },
+      {
+        "state": "GA",
+        "mean_err": 1.011,
+        "median_err": 1.008,
+        "min_err": 0.844,
+        "max_err": 1.51,
+        "hospitals": 88,
+        "valid_records": 346
+      },
+      {
+        "state": "NV",
+        "mean_err": 1.011,
+        "median_err": 1.004,
+        "min_err": 0.793,
+        "max_err": 1.252,
+        "hospitals": 19,
+        "valid_records": 94
+      },
+      {
+        "state": "KY",
+        "mean_err": 1.01,
+        "median_err": 1.005,
+        "min_err": 0.792,
+        "max_err": 1.386,
+        "hospitals": 59,
+        "valid_records": 227
+      },
+      {
+        "state": "CA",
+        "mean_err": 1.01,
+        "median_err": 1.007,
+        "min_err": 0.47,
+        "max_err": 1.484,
+        "hospitals": 253,
+        "valid_records": 1038
+      },
+      {
+        "state": "OH",
+        "mean_err": 1.008,
+        "median_err": 1.003,
+        "min_err": 0.753,
+        "max_err": 1.63,
+        "hospitals": 111,
+        "valid_records": 481
+      },
+      {
+        "state": "LA",
+        "mean_err": 1.008,
+        "median_err": 1.002,
+        "min_err": 0.759,
+        "max_err": 1.304,
+        "hospitals": 67,
+        "valid_records": 222
+      },
+      {
+        "state": "SC",
+        "mean_err": 1.007,
+        "median_err": 0.996,
+        "min_err": 0.757,
+        "max_err": 1.365,
+        "hospitals": 51,
+        "valid_records": 202
+      },
+      {
+        "state": "PA",
+        "mean_err": 1.007,
+        "median_err": 1.002,
+        "min_err": 0.662,
+        "max_err": 1.482,
+        "hospitals": 126,
+        "valid_records": 545
+      },
+      {
+        "state": "TN",
+        "mean_err": 1.005,
+        "median_err": 1.001,
+        "min_err": 0.691,
+        "max_err": 1.326,
+        "hospitals": 71,
+        "valid_records": 285
+      },
+      {
+        "state": "MI",
+        "mean_err": 1.005,
+        "median_err": 0.997,
+        "min_err": 0.778,
+        "max_err": 1.48,
+        "hospitals": 83,
+        "valid_records": 362
+      },
+      {
+        "state": "TX",
+        "mean_err": 1.004,
+        "median_err": 1.0,
+        "min_err": 0.571,
+        "max_err": 1.478,
+        "hospitals": 244,
+        "valid_records": 898
+      },
+      {
+        "state": "NY",
+        "mean_err": 1.002,
+        "median_err": 1.006,
+        "min_err": 0.577,
+        "max_err": 1.327,
+        "hospitals": 124,
+        "valid_records": 520
+      },
+      {
+        "state": "MO",
+        "mean_err": 1.001,
+        "median_err": 0.994,
+        "min_err": 0.799,
+        "max_err": 1.419,
+        "hospitals": 63,
+        "valid_records": 284
+      },
+      {
+        "state": "AZ",
+        "mean_err": 1.001,
+        "median_err": 1.0,
+        "min_err": 0.798,
+        "max_err": 1.259,
+        "hospitals": 57,
+        "valid_records": 232
+      },
+      {
+        "state": "AR",
+        "mean_err": 1.0,
+        "median_err": 1.004,
+        "min_err": 0.719,
+        "max_err": 1.284,
+        "hospitals": 40,
+        "valid_records": 156
+      },
+      {
+        "state": "IN",
+        "mean_err": 0.998,
+        "median_err": 0.991,
+        "min_err": 0.601,
+        "max_err": 1.335,
+        "hospitals": 76,
+        "valid_records": 321
+      },
+      {
+        "state": "OK",
+        "mean_err": 0.998,
+        "median_err": 0.987,
+        "min_err": 0.601,
+        "max_err": 1.537,
+        "hospitals": 64,
+        "valid_records": 226
+      },
+      {
+        "state": "CT",
+        "mean_err": 0.997,
+        "median_err": 0.994,
+        "min_err": 0.761,
+        "max_err": 1.286,
+        "hospitals": 25,
+        "valid_records": 112
+      },
+      {
+        "state": "NH",
+        "mean_err": 0.995,
+        "median_err": 0.99,
+        "min_err": 0.842,
+        "max_err": 1.212,
+        "hospitals": 13,
+        "valid_records": 63
+      },
+      {
+        "state": "NC",
+        "mean_err": 0.994,
+        "median_err": 0.99,
+        "min_err": 0.633,
+        "max_err": 1.485,
+        "hospitals": 77,
+        "valid_records": 335
+      },
+      {
+        "state": "VA",
+        "mean_err": 0.994,
+        "median_err": 0.993,
+        "min_err": 0.652,
+        "max_err": 1.294,
+        "hospitals": 69,
+        "valid_records": 302
+      },
+      {
+        "state": "DC",
+        "mean_err": 0.992,
+        "median_err": 0.981,
+        "min_err": 0.896,
+        "max_err": 1.155,
+        "hospitals": 6,
+        "valid_records": 28
+      },
+      {
+        "state": "RI",
+        "mean_err": 0.989,
+        "median_err": 0.981,
+        "min_err": 0.62,
+        "max_err": 1.327,
+        "hospitals": 9,
+        "valid_records": 37
+      },
+      {
+        "state": "VT",
+        "mean_err": 0.988,
+        "median_err": 0.972,
+        "min_err": 0.874,
+        "max_err": 1.129,
+        "hospitals": 6,
+        "valid_records": 27
+      },
+      {
+        "state": "AK",
+        "mean_err": 0.987,
+        "median_err": 0.981,
+        "min_err": 0.754,
+        "max_err": 1.227,
+        "hospitals": 8,
+        "valid_records": 36
+      },
+      {
+        "state": "MD",
+        "mean_err": 0.986,
+        "median_err": 0.98,
+        "min_err": 0.741,
+        "max_err": 1.392,
+        "hospitals": 41,
+        "valid_records": 195
+      },
+      {
+        "state": "WY",
+        "mean_err": 0.985,
+        "median_err": 0.973,
+        "min_err": 0.907,
+        "max_err": 1.218,
+        "hospitals": 8,
+        "valid_records": 33
+      },
+      {
+        "state": "HI",
+        "mean_err": 0.984,
+        "median_err": 0.994,
+        "min_err": 0.754,
+        "max_err": 1.156,
+        "hospitals": 11,
+        "valid_records": 42
+      },
+      {
+        "state": "NM",
+        "mean_err": 0.984,
+        "median_err": 0.991,
+        "min_err": 0.799,
+        "max_err": 1.132,
+        "hospitals": 23,
+        "valid_records": 76
+      },
+      {
+        "state": "WI",
+        "mean_err": 0.982,
+        "median_err": 0.981,
+        "min_err": 0.754,
+        "max_err": 1.263,
+        "hospitals": 63,
+        "valid_records": 245
+      },
+      {
+        "state": "DE",
+        "mean_err": 0.979,
+        "median_err": 0.976,
+        "min_err": 0.795,
+        "max_err": 1.207,
+        "hospitals": 6,
+        "valid_records": 31
+      },
+      {
+        "state": "NE",
+        "mean_err": 0.979,
+        "median_err": 0.979,
+        "min_err": 0.82,
+        "max_err": 1.198,
+        "hospitals": 22,
+        "valid_records": 93
+      },
+      {
+        "state": "MN",
+        "mean_err": 0.978,
+        "median_err": 0.975,
+        "min_err": 0.789,
+        "max_err": 1.25,
+        "hospitals": 44,
+        "valid_records": 175
+      },
+      {
+        "state": "IA",
+        "mean_err": 0.972,
+        "median_err": 0.971,
+        "min_err": 0.785,
+        "max_err": 1.194,
+        "hospitals": 29,
+        "valid_records": 131
+      },
+      {
+        "state": "CO",
+        "mean_err": 0.967,
+        "median_err": 0.969,
+        "min_err": 0.768,
+        "max_err": 1.331,
+        "hospitals": 45,
+        "valid_records": 183
+      },
+      {
+        "state": "KS",
+        "mean_err": 0.966,
+        "median_err": 0.968,
+        "min_err": 0.552,
+        "max_err": 1.42,
+        "hospitals": 42,
+        "valid_records": 157
+      },
+      {
+        "state": "SD",
+        "mean_err": 0.965,
+        "median_err": 0.974,
+        "min_err": 0.659,
+        "max_err": 1.252,
+        "hospitals": 15,
+        "valid_records": 49
+      },
+      {
+        "state": "WA",
+        "mean_err": 0.964,
+        "median_err": 0.97,
+        "min_err": 0.669,
+        "max_err": 1.153,
+        "hospitals": 45,
+        "valid_records": 207
+      },
+      {
+        "state": "OR",
+        "mean_err": 0.96,
+        "median_err": 0.962,
+        "min_err": 0.788,
+        "max_err": 1.276,
+        "hospitals": 32,
+        "valid_records": 131
+      },
+      {
+        "state": "UT",
+        "mean_err": 0.956,
+        "median_err": 0.963,
+        "min_err": 0.741,
+        "max_err": 1.271,
+        "hospitals": 29,
+        "valid_records": 99
+      },
+      {
+        "state": "MT",
+        "mean_err": 0.954,
+        "median_err": 0.958,
+        "min_err": 0.794,
+        "max_err": 1.146,
+        "hospitals": 10,
+        "valid_records": 53
+      },
+      {
+        "state": "ME",
+        "mean_err": 0.952,
+        "median_err": 0.966,
+        "min_err": 0.684,
+        "max_err": 1.173,
+        "hospitals": 13,
+        "valid_records": 49
+      },
+      {
+        "state": "ND",
+        "mean_err": 0.947,
+        "median_err": 0.965,
+        "min_err": 0.779,
+        "max_err": 1.079,
+        "hospitals": 7,
+        "valid_records": 35
+      },
+      {
+        "state": "ID",
+        "mean_err": 0.943,
+        "median_err": 0.95,
+        "min_err": 0.714,
+        "max_err": 1.141,
+        "hospitals": 14,
+        "valid_records": 56
+      }
+    ],
+    "highest": [
+      {
+        "state": "MA",
+        "mean_err": 1.034,
+        "median_err": 1.031,
+        "min_err": 0.594,
+        "max_err": 1.566,
+        "hospitals": 52,
+        "valid_records": 240
+      },
+      {
+        "state": "NJ",
+        "mean_err": 1.028,
+        "median_err": 1.028,
+        "min_err": 0.686,
+        "max_err": 1.424,
+        "hospitals": 61,
+        "valid_records": 272
+      },
+      {
+        "state": "FL",
+        "mean_err": 1.023,
+        "median_err": 1.014,
+        "min_err": 0.743,
+        "max_err": 1.52,
+        "hospitals": 164,
+        "valid_records": 771
+      },
+      {
+        "state": "IL",
+        "mean_err": 1.019,
+        "median_err": 1.014,
+        "min_err": 0.83,
+        "max_err": 1.583,
+        "hospitals": 109,
+        "valid_records": 491
+      },
+      {
+        "state": "MS",
+        "mean_err": 1.014,
+        "median_err": 1.011,
+        "min_err": 0.761,
+        "max_err": 1.305,
+        "hospitals": 50,
+        "valid_records": 185
+      }
+    ],
+    "lowest": [
+      {
+        "state": "ID",
+        "mean_err": 0.943,
+        "median_err": 0.95,
+        "min_err": 0.714,
+        "max_err": 1.141,
+        "hospitals": 14,
+        "valid_records": 56
+      },
+      {
+        "state": "ND",
+        "mean_err": 0.947,
+        "median_err": 0.965,
+        "min_err": 0.779,
+        "max_err": 1.079,
+        "hospitals": 7,
+        "valid_records": 35
+      },
+      {
+        "state": "ME",
+        "mean_err": 0.952,
+        "median_err": 0.966,
+        "min_err": 0.684,
+        "max_err": 1.173,
+        "hospitals": 13,
+        "valid_records": 49
+      },
+      {
+        "state": "MT",
+        "mean_err": 0.954,
+        "median_err": 0.958,
+        "min_err": 0.794,
+        "max_err": 1.146,
+        "hospitals": 10,
+        "valid_records": 53
+      },
+      {
+        "state": "UT",
+        "mean_err": 0.956,
+        "median_err": 0.963,
+        "min_err": 0.741,
+        "max_err": 1.271,
+        "hospitals": 29,
+        "valid_records": 99
+      }
+    ]
   },
   "condition_insights": [
     "Heart Failure had the highest mean predicted 30-day readmission rate in the repository analysis.",
