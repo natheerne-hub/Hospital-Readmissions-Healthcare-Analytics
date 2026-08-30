@@ -29,7 +29,7 @@ def main():
     MODEL_OUT.parent.mkdir(parents=True,exist_ok=True); joblib.dump(model,MODEL_OUT)
     manifest={
       'schema_version':'1.1.0','generated_at_utc':datetime.now(timezone.utc).isoformat(),
-      'model_id':'uci-diabetes-histgb-research-v2','architecture':'HistGradientBoostingClassifier',
+      'model_id':'uci-diabetes-readmission-hgb-v2','architecture':'HistGradientBoostingClassifier',
       'feature_variant':'full','input_features':Xfit.columns.tolist(),'feature_types':feature_types,
       'dropped_sparse_columns':dropped,'outcome':'readmission within 30 days (<30 vs other)',
       'fit_data':'training + validation patient groups only; final test excluded',

@@ -1,33 +1,28 @@
-# Power BI Dashboard
+# Dashboard
 
-The Power BI dashboard for this project is under development.
+The browser-based Readmission Intelligence MVP is implemented and available at:
 
-## Planned KPI Cards
+https://hospital-readmissions-healthcare-an.vercel.app
 
-- Unique Hospitals
-- Valid ERR Records
-- Mean ERR
-- Median ERR
-- Percentage of ERR Records Above 1
-- Clinical Conditions
+It currently provides hospital-level CMS HRRP KPIs, condition comparisons, state and hospital exploration, data-quality context, patient-model evidence, and access to the guarded research simulator.
 
-## Planned Visuals
+## Current dashboard views
 
-1. **Predicted vs Expected Readmission Rate by Condition**
-2. **Mean Predicted 30-Day Readmission Rate by Condition**
-3. **State-Level Mean ERR**
-4. **Highest vs Lowest State-Level ERR Signals**
-5. **Persistent High vs Low Hospital ERR Signals**
-6. **Hospital Detail Table**
+- Executive overview
+- Clinical-condition comparison
+- State-level signals
+- Hospital-level exploration
+- Data quality and interpretation notes
+- Patient-model evidence and research status
 
-## Planned Filters
+## Power BI extension
 
-- State
-- Clinical Condition
-- Facility Name
+A Power BI version remains a planned portfolio extension. The analysis workflow already prepares a clean import-ready CSV and supports these visuals:
 
-## Interpretation
+- KPI cards for hospitals, valid ERR records, mean/median ERR, and ERR above 1
+- Predicted versus expected readmission rate by condition
+- State-level mean ERR with minimum-record filters
+- Persistent high/low multi-condition hospital signals
+- Hospital detail table with state, condition, and facility filters
 
-The dashboard should present ERR as a descriptive HRRP performance signal. It should avoid labeling hospitals as universally “best” or “worst” based on this single measure.
-
-The `.pbix` report and dashboard screenshots will be added after the report is completed in Power BI Desktop.
+ERR must remain labeled as a descriptive HRRP performance signal, not a universal hospital ranking.

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "product": "Suliaman HealthData AI Readmission Intelligence",
+  "product": "Soliman HealthData AI Readmission Intelligence",
   "routing_policy": "Never combine incompatible datasets at inference time. Route each request only to a validated model whose population, outcome, prediction time, and required features match the request.",
   "models": [
     {

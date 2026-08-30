@@ -1,63 +1,81 @@
-# Model Card — Readmission Intelligence MVP
+# Model Card — Readmission Intelligence Research Model
 
 ## Status
 
-**Hospital-level analytics:** implemented foundation  
-**Patient-level prediction model:** not yet trained  
-**Clinical deployment:** not validated / not claimed
+| Item | Status |
+|---|---|
+| Model ID | `uci-diabetes-readmission-hgb-v2` |
+| Architecture | `HistGradientBoostingClassifier` |
+| Patient-level candidate | Trained and evaluated on a held-out UCI test set |
+| Product mode | Research/demo only |
+| Probability display | Clinically locked |
+| External validation | Not completed |
+| Clinical deployment | Not approved or claimed |
 
-## Intended use
+## Model purpose
 
-The current MVP supports exploration of hospital-level CMS HRRP readmission performance signals, data quality, reporting completeness, and multi-condition patterns.
+The model estimates the probability of early readmission (`<30 days`) for an inpatient encounter represented by the approved fields in the UCI Diabetes 130-US Hospitals dataset. It supports reproducible research, portfolio demonstration, and evaluation of a guarded inference workflow.
 
-## Current data unit
+It must not be used for diagnosis, treatment selection, discharge decisions, denial of care, or autonomous patient prioritization.
 
-One row represents a hospital-condition HRRP record. It is not a patient encounter.
+## Data scope
 
-## Current outcome/performance measures
+- **Source:** UCI Diabetes 130-US Hospitals, 1999–2008.
+- **Unit of analysis:** one inpatient encounter.
+- **Target:** early readmission recorded as `<30 days`.
+- **Transportability:** not established for another hospital, country, population, or current clinical workflow.
 
-The product uses source HRRP measures including Excess Readmission Ratio, predicted readmission rate, expected readmission rate, discharges, and reportable readmission counts where available.
+This model is separate from the CMS HRRP hospital-level analytics layer. CMS HRRP rows represent hospital-condition aggregates and are not model inputs.
 
-## Patient-level target outcome — future phase
+## Development and evaluation
 
-If a patient-level model is developed, the target must be explicitly defined before training, for example: all-cause unplanned readmission within 30 days after eligible index discharge. Inclusion/exclusion rules and the exact source definition must be documented with the dataset.
+Median imputation and all learned preprocessing are fitted on training data only. The selected candidate is a histogram-based gradient boosting model using the full approved feature set. Selection and reporting use a held-out test set documented in the reproducible evidence artifacts.
 
-## Features — future phase
+| Hold-out metric | Value |
+|---|---:|
+| ROC-AUC | 0.6815 |
+| PR-AUC | 0.2286 |
+| Brier score | 0.0905 |
+| Research threshold | 0.13 |
+| Sensitivity | 0.5113 |
+| Specificity | 0.7372 |
+| Precision | 0.1889 |
+| F1 | 0.2759 |
+| False-positive rate | 0.2628 |
+| False-discovery rate | 0.8111 |
 
-No patient-level features are approved yet. Candidate features may only be used if they exist legitimately in the selected dataset and are available at the intended prediction time. Features that leak post-outcome information must be excluded.
-
-## Validation requirements
-
-Before any patient-level risk percentage is shown as a model output, the project must include:
-
-1. Reproducible train/validation/test methodology.
-2. Class-balance report.
-3. Baseline comparator.
-4. ROC-AUC and PR-AUC.
-5. Sensitivity, specificity, precision and F1 at the selected threshold.
-6. Confusion matrix.
-7. Calibration curve/assessment and Brier score.
-8. Confidence intervals where feasible.
-9. Subgroup performance checks where variables and sample sizes permit.
-10. External validation before claiming transportability to a new health system.
+Confusion matrix at threshold 0.13: TP 1,109; FP 4,762; TN 13,358; FN 1,060.
 
 ## Threshold policy
 
-A default probability threshold of 0.50 is not automatically accepted. The operating threshold must be chosen according to the intended intervention capacity and the relative cost of false negatives versus false positives.
+The 0.13 threshold is a research operating point, not a clinical recommendation. A production threshold would need to reflect intervention capacity, harm from false negatives, burden from false positives, calibration in the target population, and formal governance approval.
 
 ## Explainability policy
 
-Any feature-attribution method must be described as model explanation/association, not proof of clinical causation. Explanations must use features available to the model at inference time.
+Feature contributions or importance values describe the fitted model. They do not establish clinical causation, and they must only use variables available at the intended prediction time.
 
 ## Known limitations
 
-- Current data are aggregate hospital-level HRRP data.
-- Current analytics are descriptive and signal-oriented.
-- Missing/suppressed reporting reduces analyzable coverage for some measures.
-- ERR does not measure every dimension of hospital quality.
-- No patient-level model performance exists yet, so no patient-level accuracy/AUC claim is allowed.
-- No Dubai-specific clinical validity is claimed until external validation is performed on authorized local data.
+- The source data are historical and specific to US hospitals treating patients with diabetes.
+- External validity and current-population transportability have not been demonstrated.
+- ROC-AUC is moderate, and precision is low at the selected threshold.
+- The 81.1% false-discovery rate could create substantial review burden.
+- Calibration has not been approved for clinical probability communication.
+- Performance may differ across demographic, operational, and clinical subgroups.
+- Dataset coding, missingness, and retrospective labels may introduce bias.
+- No prospective workflow, impact, safety, or local health-system study has been completed.
+
+## Conditions for unlocking clinical probability
+
+Probability display must remain locked until the project has:
+
+1. External validation on authorized target-population data.
+2. Calibration assessment and, if needed, recalibration.
+3. Subgroup performance and fairness review.
+4. Prospective workflow and clinical-utility evaluation.
+5. Monitoring, rollback, and model-change controls.
+6. Privacy, security, clinical, and governance approval.
 
 ## Safety statement
 
-This MVP is for analytics, research, product demonstration, and pilot evaluation. It is not a diagnostic tool and must not be used as the sole basis for patient care decisions.
+This model and its simulator are for research, education, and product demonstration only. They are not medical devices, do not provide medical advice, and must not be the sole basis for patient-care decisions.

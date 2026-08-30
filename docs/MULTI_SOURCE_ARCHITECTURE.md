@@ -2,7 +2,7 @@
 
 ## Product rule
 
-Suliaman HealthData AI Readmission Intelligence is one product with multiple evidence layers. Datasets remain separate unless a documented harmonization study proves that combining them is valid.
+Soliman HealthData AI Readmission Intelligence is one product with multiple evidence layers. Datasets remain separate unless a documented harmonization study proves that combining them is valid.
 
 ## Layers
 

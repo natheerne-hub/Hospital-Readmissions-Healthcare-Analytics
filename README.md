@@ -1,169 +1,117 @@
-# 🏥 Hospital Readmissions Healthcare Analytics
+# Readmission Intelligence
 
-### CMS HRRP FY 2026 | Healthcare Data Analysis + Power BI
+Healthcare analytics and research modeling for understanding hospital readmission patterns.
 
-A healthcare analytics portfolio project examining hospital readmission performance across **3,055 hospitals**, **51 states/territories**, and **6 clinical conditions** in the Hospital Readmissions Reduction Program (HRRP) dataset.
+[**Open the live web app**](https://hospital-readmissions-healthcare-an.vercel.app) · [**View the patient-risk simulator**](https://hospital-readmissions-healthcare-an.vercel.app/simulator.html)
 
-**Author:** Dr. Natheer Soliman, MD  
-**Focus:** Healthcare Data Analytics · Clinical Data · Hospital Quality · Power BI
+> Research and portfolio project only. It is not a diagnostic tool and must not be used as the sole basis for patient-care decisions.
 
----
+## What this project does
 
-## 🎯 Project Objective
+Readmission Intelligence brings two complementary evidence layers into one web experience while keeping their data and conclusions strictly separate:
 
-The project explores risk-adjusted hospital readmission performance using the **Excess Readmission Ratio (ERR)** together with predicted and expected 30-day readmission rates.
+| Evidence layer | Dataset and unit | Purpose |
+|---|---|---|
+| Hospital analytics | CMS HRRP FY 2026; one hospital-condition record | Explore risk-adjusted performance signals, reporting completeness, geographic variation, and multi-condition patterns |
+| Patient-model research | UCI Diabetes 130-US Hospitals; one inpatient encounter | Evaluate a research model for early readmission risk and demonstrate a guarded inference workflow |
 
-The analysis focuses on:
+Hospital-level HRRP signals are never presented as patient-level risk. The UCI research model is not claimed to be clinically validated or transferable to a new health system.
 
-- Data-quality and missing-value assessment
-- Clinical-condition comparisons
-- State-level readmission patterns
-- Hospital-level performance signals
-- Persistent high- and low-ERR patterns
-- Preparation of a clean dataset for a Power BI dashboard
+## Live MVP
 
-> **Interpretation note:** ERR is used here as a readmission-performance signal within HRRP data. It should not be interpreted as a complete ranking of hospital quality.
+The responsive web app includes:
 
----
+- Executive hospital-level KPIs and condition comparisons
+- State and hospital exploration
+- Transparent data-quality and interpretation notes
+- Patient-model evidence, metrics, and model status
+- A guarded research simulator backed by a Python prediction API
+- Explicit separation of descriptive analytics from predictive modeling
 
-## 📊 Dataset Overview
+## Hospital analytics — CMS HRRP
 
-| Metric | Value |
+| Metric | Result |
 |---|---:|
 | Hospital-condition records | 18,330 |
 | Unique hospitals | 3,055 |
 | States / territories | 51 |
-| HRRP clinical conditions | 6 |
+| Clinical conditions | 6 |
 | Valid ERR records | 11,720 |
-| Duplicate rows | 0 |
-| Reporting period | Jul 2021 – Jun 2024 |
+| Mean ERR | 1.002 |
+| Median ERR | 0.997 |
+| Valid records with ERR > 1 | 48.1% |
+| Persistent high-ERR hospitals* | 75 |
+| Persistent low-ERR hospitals* | 98 |
 
-### Clinical Conditions
+\*Among hospitals reporting ERR for at least five conditions. These are investigation signals, not universal rankings of quality.
 
-- Acute Myocardial Infarction (AMI)
-- Heart Failure (HF)
-- COPD
-- Pneumonia
-- CABG
-- Hip/Knee Replacement
+The six conditions are acute myocardial infarction, heart failure, COPD, pneumonia, CABG, and hip/knee replacement. The reporting period is July 2021 through June 2024.
 
----
+## Patient-model research — UCI Diabetes
 
-## 🧹 Data Preparation
+The selected candidate is a `HistGradientBoostingClassifier` trained on the full approved feature set. The target is early readmission (`<30 days`) in the UCI Diabetes 130-US Hospitals dataset.
 
-The workflow preserves the original data while creating analysis-ready variables and subsets.
+| Hold-out metric | Result |
+|---|---:|
+| ROC-AUC | 0.6815 |
+| PR-AUC | 0.2286 |
+| Brier score | 0.0905 |
+| Research threshold | 0.13 |
+| Sensitivity | 0.5113 |
+| Specificity | 0.7372 |
+| Precision | 0.1889 |
+| F1 score | 0.2759 |
 
-Key steps include:
+At the selected research threshold, the hold-out confusion matrix was TP 1,109, FP 4,762, TN 13,358, and FN 1,060. The false-discovery rate was 81.1%, so probability display remains clinically locked pending external validation, calibration review, subgroup assessment, workflow evaluation, and governance approval.
 
-- Auditing column types, missing values, and duplicates
-- Preserving `Too Few to Report` as suppressed/not-reported information rather than converting it to zero
-- Creating a numeric readmissions field with safe coercion
-- Investigating the relationship between source footnotes and missing measures
-- Mapping coded measure names to readable clinical-condition names
-- Converting reporting dates to proper datetime fields
-- Creating separate valid subsets for ERR, discharge, and numeric readmission analyses
+See [the model card](docs/MODEL_CARD.md) and [final model decision](docs/FINAL_MODEL_DECISION.md) for the full interpretation.
 
----
-
-## 📈 Key Findings
-
-- Overall **mean ERR ≈ 1.002** and median ERR ≈ **0.997**.
-- **48.1%** of valid hospital-condition ERR records were above 1.
-- Mean ERR values were tightly clustered around 1 across the six clinical conditions.
-- **Heart Failure** had the highest mean predicted 30-day readmission rate, followed by **COPD**.
-- State-level analysis showed meaningful geographic variation after requiring at least **100 valid ERR records** for the comparison.
-- Among hospitals reporting ERR for at least five conditions, **75 hospitals** showed ERR > 1 across all reported conditions.
-- Using a strict definition of ERR < 1, **98 hospitals** showed ERR below 1 across all reported conditions.
-
-These findings identify patterns for further investigation rather than causal explanations or definitive quality rankings.
-
----
-
-## 🧠 Analytical Workflow
+## Architecture
 
 ```text
-Raw HRRP Data
-      ↓
-Data Audit
-      ↓
-Missing / Suppressed Value Interpretation
-      ↓
-Clinical Condition Mapping
-      ↓
-Overall Healthcare KPIs
-      ↓
-Condition-Level Analysis
-      ↓
-State-Level Analysis
-      ↓
-Hospital-Level Analysis
-      ↓
-Persistent ERR Signal Analysis
-      ↓
-Power BI Dataset Preparation
+CMS HRRP data ──> descriptive hospital analytics ──> web dashboard
+
+UCI encounters ──> reproducible modeling pipeline ──> versioned artifact
+                                                        │
+                                                        └──> guarded research API ──> simulator
 ```
 
----
+The browser never combines the two datasets into a single inference. Each layer preserves its own unit of analysis, provenance, limitations, and permitted claims.
 
-## 🛠️ Tools
-
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Google Colab / Jupyter
-- Power BI Desktop
-
----
-
-## 📁 Repository Structure
+## Repository guide
 
 ```text
-Hospital-Readmissions-Healthcare-Analytics/
-├── README.md
-├── requirements.txt
-├── analysis/
-│   └── hospital_readmissions_analysis.py
-├── data/
-│   └── README.md
-├── dashboard/
-│   └── README.md
-└── .gitignore
+├── index.html, app.js, styles.css     # Web dashboard
+├── simulator.html, simulator.js       # Research simulator
+├── api/predict.py                      # Guarded prediction endpoint
+├── analysis/                           # CMS HRRP analysis workflow
+├── modeling/                           # UCI training and evaluation pipeline
+├── runtime/model/                      # Versioned research artifact and manifest
+├── data/                               # Data documentation and derived web assets
+├── docs/                               # Model card, decisions, and architecture
+├── dashboard/                          # Dashboard implementation notes
+└── tests/                              # API and integrity checks
 ```
 
-A cleaned Power BI CSV is generated by the analysis workflow. The Power BI report will be added after dashboard development is complete.
+## Run locally
 
----
+```bash
+python -m http.server 8000
+```
 
-## 📌 Dashboard Plan
+Open `http://localhost:8000`. To run the prediction API locally, install `requirements.txt` and start the Python API using a Vercel-compatible local workflow.
 
-The Power BI dashboard is designed to include:
+## Data and interpretation safeguards
 
-- Total hospitals
-- Valid ERR records
-- Mean ERR
-- Percentage of ERR records above 1
-- Predicted vs expected readmission rates by condition
-- State-level ERR comparisons
-- Hospital-level persistent high/low ERR signals
-- Filters for state, hospital, and clinical condition
+- Suppressed values such as `Too Few to Report` are preserved as missing/not reported, never converted to zero.
+- ERR is treated as a risk-adjusted performance signal, not a complete measure of hospital quality.
+- Descriptive associations do not establish causation.
+- Patient-model explanations describe model behavior, not clinical causes.
+- The patient model is restricted to research/demo use and has no local-health-system validation.
 
----
-
-## ⚠️ Limitations
-
-- Missing and suppressed values are meaningful features of the reporting dataset and reduce analyzable sample sizes for some measures.
-- Comparisons are descriptive and do not establish causation.
-- ERR does not represent every dimension of hospital quality.
-- Hospital comparisons depend on available condition coverage and reporting completeness.
-- Results should be interpreted in the context of HRRP methodology and source-data definitions.
-
----
-
-## 👨‍⚕️ Author
+## Author
 
 **Dr. Natheer Soliman, MD**  
-Healthcare Data Analyst | Clinical Data & AI
+Medical Doctor · Clinical & Healthcare Data Analytics · Medical AI
 
-🔗 GitHub: https://github.com/natheerne-hub  
-🌐 Portfolio: https://natheerne-hub.github.io/natheersoliman.github.io/
+[Portfolio](https://natheerne-hub.github.io/natheersoliman.github.io/) · [GitHub](https://github.com/natheerne-hub)

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This module is the research-model layer for the Suliaman HealthData AI Readmission Intelligence MVP. It is deliberately separate from the CMS HRRP hospital-level analytics because the two datasets answer different questions.
+This module is the research-model layer for the Soliman HealthData AI Readmission Intelligence MVP. It is deliberately separate from the CMS HRRP hospital-level analytics because the two datasets answer different questions.
 
 - **CMS HRRP:** hospital-condition performance signals.
 - **UCI Diabetes 130-US Hospitals:** patient-encounter readmission prediction research.

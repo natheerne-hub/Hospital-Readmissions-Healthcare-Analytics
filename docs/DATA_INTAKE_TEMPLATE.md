@@ -1,6 +1,6 @@
 # Data Intake Review Template
 
-Use this review before any new dataset is allowed into Suliaman HealthData AI Readmission Intelligence.
+Use this review before any new dataset is allowed into Soliman HealthData AI Readmission Intelligence.
 
 ## 1. Identity and provenance
 - Dataset name:
