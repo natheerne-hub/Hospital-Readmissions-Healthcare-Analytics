@@ -68,6 +68,8 @@ At the selected research threshold, the hold-out confusion matrix was TP 1,109, 
 
 See [the model card](docs/MODEL_CARD.md) and [final model decision](docs/FINAL_MODEL_DECISION.md) for the full interpretation.
 
+The latest [model improvement audit](docs/MODEL_IMPROVEMENT_AUDIT.md) compares engineered HistGradientBoosting and XGBoost challengers using matched cohorts and paired bootstrap uncertainty. Neither challenger replaces the registered model because improvement was not robust across all required metrics.
+
 ## Architecture
 
 ```text

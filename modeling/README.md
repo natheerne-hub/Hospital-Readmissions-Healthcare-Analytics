@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This module is the research-model layer for the Soliman HealthData AI Readmission Intelligence MVP. It is deliberately separate from the CMS HRRP hospital-level analytics because the two datasets answer different questions.
+This module is the research-model layer for the Dr. Natheer Soliman Readmission Intelligence MVP. It is deliberately separate from the CMS HRRP hospital-level analytics because the two datasets answer different questions.
 
 - **CMS HRRP:** hospital-condition performance signals.
 - **UCI Diabetes 130-US Hospitals:** patient-encounter readmission prediction research.
@@ -93,3 +93,17 @@ A model developed on historical US diabetes encounters cannot be assumed to gene
 ## Clinical status
 
 **Research MVP only. Not for diagnosis, treatment decisions, or unsupervised clinical deployment.**
+
+## Improvement audit
+
+The August 2026 repair cycle added matched-cohort comparison, eligible-discharge filtering, clinical feature engineering, an XGBoost challenger, operational threshold reporting, and paired bootstrap uncertainty.
+
+The challenger was **not promoted** because improvement was not robust across PR-AUC and Brier score confidence intervals. See [`docs/MODEL_IMPROVEMENT_AUDIT.md`](../docs/MODEL_IMPROVEMENT_AUDIT.md).
+
+```bash
+pip install -r modeling/requirements-research.txt
+python modeling/improve_readmission_model.py
+python modeling/repair_model_selection.py
+python modeling/benchmark_xgboost_challenger.py
+python modeling/bootstrap_challenger_comparison.py
+```

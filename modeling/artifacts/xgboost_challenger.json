@@ -1,0 +1,395 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-08-30T19:31:40.668225+00:00",
+  "selection_policy": "validation selection; same locked eligible test cohort",
+  "validation_candidates": [
+    {
+      "variant": "raw",
+      "candidate": 1,
+      "parameters": {
+        "n_estimators": 400,
+        "max_depth": 3,
+        "learning_rate": 0.04,
+        "min_child_weight": 8,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "reg_lambda": 3.0
+      },
+      "roc_auc": 0.6663,
+      "pr_auc": 0.2238,
+      "brier_score": 0.0962,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.13,
+          "sensitivity_recall": 0.5224,
+          "specificity": 0.7157,
+          "precision": 0.1908,
+          "f1": 0.2795,
+          "false_positive_rate": 0.2843,
+          "false_discovery_rate": 0.8092,
+          "alerts_per_100_encounters": 31.14,
+          "false_positive_alerts_per_100_encounters": 25.2,
+          "missed_readmissions_per_100_encounters": 5.43,
+          "tp": 944,
+          "fp": 4003,
+          "tn": 10075,
+          "fn": 863
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.14,
+          "sensitivity_recall": 0.4516,
+          "specificity": 0.7701,
+          "precision": 0.2014,
+          "f1": 0.2785,
+          "false_positive_rate": 0.2299,
+          "false_discovery_rate": 0.7986,
+          "alerts_per_100_encounters": 25.51,
+          "false_positive_alerts_per_100_encounters": 20.37,
+          "missed_readmissions_per_100_encounters": 6.24,
+          "tp": 816,
+          "fp": 3236,
+          "tn": 10842,
+          "fn": 991
+        }
+      }
+    },
+    {
+      "variant": "raw",
+      "candidate": 2,
+      "parameters": {
+        "n_estimators": 500,
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "min_child_weight": 10,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "reg_lambda": 5.0
+      },
+      "roc_auc": 0.6686,
+      "pr_auc": 0.2254,
+      "brier_score": 0.0961,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.16,
+          "sensitivity_recall": 0.363,
+          "specificity": 0.8459,
+          "precision": 0.2322,
+          "f1": 0.2832,
+          "false_positive_rate": 0.1541,
+          "false_discovery_rate": 0.7678,
+          "alerts_per_100_encounters": 17.78,
+          "false_positive_alerts_per_100_encounters": 13.65,
+          "missed_readmissions_per_100_encounters": 7.25,
+          "tp": 656,
+          "fp": 2169,
+          "tn": 11909,
+          "fn": 1151
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4079,
+          "specificity": 0.81,
+          "precision": 0.216,
+          "f1": 0.2824,
+          "false_positive_rate": 0.19,
+          "false_discovery_rate": 0.784,
+          "alerts_per_100_encounters": 21.48,
+          "false_positive_alerts_per_100_encounters": 16.84,
+          "missed_readmissions_per_100_encounters": 6.74,
+          "tp": 737,
+          "fp": 2675,
+          "tn": 11403,
+          "fn": 1070
+        }
+      }
+    },
+    {
+      "variant": "raw",
+      "candidate": 3,
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.035,
+        "min_child_weight": 12,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 6.0
+      },
+      "roc_auc": 0.6712,
+      "pr_auc": 0.227,
+      "brier_score": 0.0959,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.16,
+          "sensitivity_recall": 0.3641,
+          "specificity": 0.8459,
+          "precision": 0.2327,
+          "f1": 0.2839,
+          "false_positive_rate": 0.1541,
+          "false_discovery_rate": 0.7673,
+          "alerts_per_100_encounters": 17.8,
+          "false_positive_alerts_per_100_encounters": 13.66,
+          "missed_readmissions_per_100_encounters": 7.23,
+          "tp": 658,
+          "fp": 2170,
+          "tn": 11908,
+          "fn": 1149
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4101,
+          "specificity": 0.8059,
+          "precision": 0.2134,
+          "f1": 0.2807,
+          "false_positive_rate": 0.1941,
+          "false_discovery_rate": 0.7866,
+          "alerts_per_100_encounters": 21.86,
+          "false_positive_alerts_per_100_encounters": 17.2,
+          "missed_readmissions_per_100_encounters": 6.71,
+          "tp": 741,
+          "fp": 2732,
+          "tn": 11346,
+          "fn": 1066
+        }
+      }
+    },
+    {
+      "variant": "augmented",
+      "candidate": 1,
+      "parameters": {
+        "n_estimators": 400,
+        "max_depth": 3,
+        "learning_rate": 0.04,
+        "min_child_weight": 8,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "reg_lambda": 3.0
+      },
+      "roc_auc": 0.6695,
+      "pr_auc": 0.228,
+      "brier_score": 0.096,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4051,
+          "specificity": 0.8146,
+          "precision": 0.219,
+          "f1": 0.2843,
+          "false_positive_rate": 0.1854,
+          "false_discovery_rate": 0.781,
+          "alerts_per_100_encounters": 21.04,
+          "false_positive_alerts_per_100_encounters": 16.43,
+          "missed_readmissions_per_100_encounters": 6.77,
+          "tp": 732,
+          "fp": 2610,
+          "tn": 11468,
+          "fn": 1075
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4051,
+          "specificity": 0.8146,
+          "precision": 0.219,
+          "f1": 0.2843,
+          "false_positive_rate": 0.1854,
+          "false_discovery_rate": 0.781,
+          "alerts_per_100_encounters": 21.04,
+          "false_positive_alerts_per_100_encounters": 16.43,
+          "missed_readmissions_per_100_encounters": 6.77,
+          "tp": 732,
+          "fp": 2610,
+          "tn": 11468,
+          "fn": 1075
+        }
+      }
+    },
+    {
+      "variant": "augmented",
+      "candidate": 2,
+      "parameters": {
+        "n_estimators": 500,
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "min_child_weight": 10,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "reg_lambda": 5.0
+      },
+      "roc_auc": 0.6719,
+      "pr_auc": 0.2305,
+      "brier_score": 0.0958,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4195,
+          "specificity": 0.8087,
+          "precision": 0.2196,
+          "f1": 0.2883,
+          "false_positive_rate": 0.1913,
+          "false_discovery_rate": 0.7804,
+          "alerts_per_100_encounters": 21.72,
+          "false_positive_alerts_per_100_encounters": 16.95,
+          "missed_readmissions_per_100_encounters": 6.6,
+          "tp": 758,
+          "fp": 2693,
+          "tn": 11385,
+          "fn": 1049
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.4195,
+          "specificity": 0.8087,
+          "precision": 0.2196,
+          "f1": 0.2883,
+          "false_positive_rate": 0.1913,
+          "false_discovery_rate": 0.7804,
+          "alerts_per_100_encounters": 21.72,
+          "false_positive_alerts_per_100_encounters": 16.95,
+          "missed_readmissions_per_100_encounters": 6.6,
+          "tp": 758,
+          "fp": 2693,
+          "tn": 11385,
+          "fn": 1049
+        }
+      }
+    },
+    {
+      "variant": "augmented",
+      "candidate": 3,
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.035,
+        "min_child_weight": 12,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 6.0
+      },
+      "roc_auc": 0.6738,
+      "pr_auc": 0.2323,
+      "brier_score": 0.0957,
+      "operating_points": {
+        "f1_optimized": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.42,
+          "specificity": 0.8052,
+          "precision": 0.2168,
+          "f1": 0.286,
+          "false_positive_rate": 0.1948,
+          "false_discovery_rate": 0.7832,
+          "alerts_per_100_encounters": 22.04,
+          "false_positive_alerts_per_100_encounters": 17.26,
+          "missed_readmissions_per_100_encounters": 6.6,
+          "tp": 759,
+          "fp": 2742,
+          "tn": 11336,
+          "fn": 1048
+        },
+        "minimum_40pct_sensitivity": {
+          "threshold": 0.15,
+          "sensitivity_recall": 0.42,
+          "specificity": 0.8052,
+          "precision": 0.2168,
+          "f1": 0.286,
+          "false_positive_rate": 0.1948,
+          "false_discovery_rate": 0.7832,
+          "alerts_per_100_encounters": 22.04,
+          "false_positive_alerts_per_100_encounters": 17.26,
+          "missed_readmissions_per_100_encounters": 6.6,
+          "tp": 759,
+          "fp": 2742,
+          "tn": 11336,
+          "fn": 1048
+        }
+      }
+    }
+  ],
+  "selected": {
+    "variant": "augmented",
+    "candidate": 3,
+    "parameters": {
+      "n_estimators": 350,
+      "max_depth": 5,
+      "learning_rate": 0.035,
+      "min_child_weight": 12,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 6.0
+    },
+    "roc_auc": 0.6738,
+    "pr_auc": 0.2323,
+    "brier_score": 0.0957,
+    "operating_points": {
+      "f1_optimized": {
+        "threshold": 0.15,
+        "sensitivity_recall": 0.42,
+        "specificity": 0.8052,
+        "precision": 0.2168,
+        "f1": 0.286,
+        "false_positive_rate": 0.1948,
+        "false_discovery_rate": 0.7832,
+        "alerts_per_100_encounters": 22.04,
+        "false_positive_alerts_per_100_encounters": 17.26,
+        "missed_readmissions_per_100_encounters": 6.6,
+        "tp": 759,
+        "fp": 2742,
+        "tn": 11336,
+        "fn": 1048
+      },
+      "minimum_40pct_sensitivity": {
+        "threshold": 0.15,
+        "sensitivity_recall": 0.42,
+        "specificity": 0.8052,
+        "precision": 0.2168,
+        "f1": 0.286,
+        "false_positive_rate": 0.1948,
+        "false_discovery_rate": 0.7832,
+        "alerts_per_100_encounters": 22.04,
+        "false_positive_alerts_per_100_encounters": 17.26,
+        "missed_readmissions_per_100_encounters": 6.6,
+        "tp": 759,
+        "fp": 2742,
+        "tn": 11336,
+        "fn": 1048
+      }
+    }
+  },
+  "locked_test": {
+    "roc_auc": 0.6822,
+    "pr_auc": 0.231,
+    "brier_score": 0.092,
+    "f1_optimized": {
+      "threshold": 0.15,
+      "sensitivity_recall": 0.4354,
+      "specificity": 0.8087,
+      "precision": 0.2177,
+      "f1": 0.2903,
+      "false_positive_rate": 0.1913,
+      "false_discovery_rate": 0.7823,
+      "alerts_per_100_encounters": 21.79,
+      "false_positive_alerts_per_100_encounters": 17.04,
+      "missed_readmissions_per_100_encounters": 6.15,
+      "tp": 940,
+      "fp": 3377,
+      "tn": 14280,
+      "fn": 1219
+    },
+    "minimum_40pct_sensitivity": {
+      "threshold": 0.15,
+      "sensitivity_recall": 0.4354,
+      "specificity": 0.8087,
+      "precision": 0.2177,
+      "f1": 0.2903,
+      "false_positive_rate": 0.1913,
+      "false_discovery_rate": 0.7823,
+      "alerts_per_100_encounters": 21.79,
+      "false_positive_alerts_per_100_encounters": 17.04,
+      "missed_readmissions_per_100_encounters": 6.15,
+      "tp": 940,
+      "fp": 3377,
+      "tn": 14280,
+      "fn": 1219
+    }
+  },
+  "clinical_status": "research challenger; not clinically validated"
+}

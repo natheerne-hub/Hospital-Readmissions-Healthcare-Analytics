@@ -1,0 +1,169 @@
+{
+  "schema_version": "2.0.0",
+  "generated_at_utc": "2026-08-30T19:25:31.145824+00:00",
+  "dataset": "UCI Diabetes 130-US Hospitals for Years 1999-2008",
+  "outcome": "readmission within 30 days among eligible discharges",
+  "cohort": {
+    "input_encounters": 101766,
+    "excluded_expired_or_hospice": 2423,
+    "eligible_encounters": 99343
+  },
+  "split": {
+    "policy": "patient-group train/calibration/threshold/test",
+    "train_encounters": 63444,
+    "calibration_encounters": 7925,
+    "threshold_encounters": 7850,
+    "locked_test_encounters": 20124
+  },
+  "candidate_selection": {
+    "policy": "selected before locked test evaluation",
+    "candidates": [
+      {
+        "candidate": 1,
+        "parameters": {
+          "max_iter": 220,
+          "learning_rate": 0.04,
+          "max_leaf_nodes": 15,
+          "min_samples_leaf": 40,
+          "l2_regularization": 1.0
+        },
+        "roc_auc": 0.6837,
+        "pr_auc": 0.2279,
+        "brier_score": 0.0963
+      },
+      {
+        "candidate": 2,
+        "parameters": {
+          "max_iter": 260,
+          "learning_rate": 0.05,
+          "max_leaf_nodes": 31,
+          "min_samples_leaf": 30,
+          "l2_regularization": 2.0
+        },
+        "roc_auc": 0.6867,
+        "pr_auc": 0.2329,
+        "brier_score": 0.096
+      },
+      {
+        "candidate": 3,
+        "parameters": {
+          "max_iter": 300,
+          "learning_rate": 0.04,
+          "max_leaf_nodes": 31,
+          "min_samples_leaf": 60,
+          "l2_regularization": 3.0
+        },
+        "roc_auc": 0.6861,
+        "pr_auc": 0.2348,
+        "brier_score": 0.0959
+      },
+      {
+        "candidate": 4,
+        "parameters": {
+          "max_iter": 260,
+          "learning_rate": 0.05,
+          "max_leaf_nodes": 63,
+          "min_samples_leaf": 80,
+          "l2_regularization": 5.0
+        },
+        "roc_auc": 0.6846,
+        "pr_auc": 0.2336,
+        "brier_score": 0.096
+      }
+    ],
+    "selected": {
+      "candidate": 2,
+      "parameters": {
+        "max_iter": 260,
+        "learning_rate": 0.05,
+        "max_leaf_nodes": 31,
+        "min_samples_leaf": 30,
+        "l2_regularization": 2.0
+      },
+      "roc_auc": 0.6867,
+      "pr_auc": 0.2329,
+      "brier_score": 0.096
+    }
+  },
+  "calibration": {
+    "candidates": [
+      {
+        "method": "uncalibrated",
+        "roc_auc": 0.6601,
+        "pr_auc": 0.2035,
+        "brier_score": 0.0977
+      },
+      {
+        "method": "sigmoid",
+        "roc_auc": 0.6601,
+        "pr_auc": 0.2035,
+        "brier_score": 0.0979
+      },
+      {
+        "method": "isotonic",
+        "roc_auc": 0.6599,
+        "pr_auc": 0.1965,
+        "brier_score": 0.098
+      }
+    ],
+    "selected": {
+      "method": "uncalibrated",
+      "roc_auc": 0.6601,
+      "pr_auc": 0.2035,
+      "brier_score": 0.0977
+    }
+  },
+  "threshold_selection": {
+    "threshold": 0.13,
+    "metrics": {
+      "threshold": 0.13,
+      "sensitivity_recall": 0.4928,
+      "specificity": 0.7291,
+      "precision": 0.1905,
+      "f1": 0.2747,
+      "false_positive_rate": 0.2709,
+      "false_discovery_rate": 0.8095,
+      "alerts_per_100_encounters": 29.63,
+      "false_positive_alerts_per_100_encounters": 23.99,
+      "missed_readmissions_per_100_encounters": 5.81,
+      "tp": 443,
+      "fp": 1883,
+      "tn": 5068,
+      "fn": 456
+    }
+  },
+  "locked_test": {
+    "roc_auc": 0.663,
+    "pr_auc": 0.2329,
+    "brier_score": 0.0979,
+    "threshold_metrics": {
+      "threshold": 0.13,
+      "sensitivity_recall": 0.5023,
+      "specificity": 0.7194,
+      "precision": 0.1907,
+      "f1": 0.2765,
+      "false_positive_rate": 0.2806,
+      "false_discovery_rate": 0.8093,
+      "alerts_per_100_encounters": 30.64,
+      "false_positive_alerts_per_100_encounters": 24.8,
+      "missed_readmissions_per_100_encounters": 5.79,
+      "tp": 1176,
+      "fp": 4990,
+      "tn": 12793,
+      "fn": 1165
+    }
+  },
+  "feature_engineering": [
+    "ICD-9 clinical diagnosis groups",
+    "prior utilization totals and flags",
+    "care intensity per hospital day",
+    "medication activity and change counts",
+    "age midpoint and diagnosis diversity"
+  ],
+  "dropped_sparse_columns": [
+    "weight",
+    "max_glu_serum",
+    "A1Cresult"
+  ],
+  "clinical_status": "research only; not externally validated"
+}

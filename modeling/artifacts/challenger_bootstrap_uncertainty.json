@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-08-30T19:33:03.260036+00:00",
+  "method": "1000 paired nonparametric bootstrap resamples of the same locked test encounters",
+  "observed": {
+    "baseline": {
+      "roc_auc": 0.67705,
+      "pr_auc": 0.22803,
+      "brier_score": 0.09221
+    },
+    "challenger": {
+      "roc_auc": 0.68221,
+      "pr_auc": 0.23105,
+      "brier_score": 0.09198
+    },
+    "challenger_minus_baseline": {
+      "roc_auc": 0.00516,
+      "pr_auc": 0.00302,
+      "brier_score": -0.00023
+    }
+  },
+  "delta_uncertainty": {
+    "roc_auc": {
+      "mean": 0.00527,
+      "ci_95_low": 0.00177,
+      "ci_95_high": 0.00936
+    },
+    "pr_auc": {
+      "mean": 0.00301,
+      "ci_95_low": -0.00319,
+      "ci_95_high": 0.00927
+    },
+    "brier_score": {
+      "mean": -0.00023,
+      "ci_95_low": -0.00048,
+      "ci_95_high": 2e-05
+    }
+  },
+  "robust_improvement": false,
+  "decision": "Promote only if discrimination confidence intervals are above zero and the Brier interval is not above zero.",
+  "clinical_status": "research uncertainty analysis; not clinical validation"
+}

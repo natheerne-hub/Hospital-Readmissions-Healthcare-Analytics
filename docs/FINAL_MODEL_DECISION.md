@@ -60,3 +60,9 @@ The model may be used as a **research MVP / technical demonstration** with trans
 3. Evaluate temporal and subgroup stability.
 4. Test explicit operational thresholds based on intervention capacity, not maximum F1 alone.
 5. Perform external validation and local recalibration on an authorized target population such as a Dubai sandbox dataset before any clinical claim.
+
+## August 2026 challenger audit
+
+An engineered HistGradientBoosting candidate and an XGBoost challenger were evaluated on the same eligible-discharge patient-group test cohort. XGBoost reached ROC-AUC 0.6822, PR-AUC 0.2310, and Brier score 0.0920. Paired bootstrap analysis showed a stable ROC-AUC gain, but the PR-AUC confidence interval crossed zero and the Brier interval narrowly crossed zero.
+
+The challenger therefore **does not replace the registered model**. Full evidence is recorded in [`MODEL_IMPROVEMENT_AUDIT.md`](MODEL_IMPROVEMENT_AUDIT.md).

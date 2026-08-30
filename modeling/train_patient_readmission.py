@@ -29,7 +29,11 @@ TARGET_COLUMN = "readmitted"
 def load_data() -> pd.DataFrame:
     if not DATA_PATH.exists():
         raise FileNotFoundError("Missing data/diabetic_data.csv. Download the official UCI dataset first.")
-    df = pd.read_csv(DATA_PATH, na_values=["?", "Unknown/Invalid", "None"])
+    df = pd.read_csv(
+        DATA_PATH,
+        na_values=["?", "Unknown/Invalid", "None"],
+        low_memory=False,
+    )
     if TARGET_COLUMN not in df.columns or "patient_nbr" not in df.columns:
         raise ValueError("Expected readmitted and patient_nbr columns were not found.")
     return df
