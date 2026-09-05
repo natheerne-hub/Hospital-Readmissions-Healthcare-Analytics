@@ -2,7 +2,7 @@
 
 Healthcare analytics and research modeling for understanding hospital readmission patterns.
 
-[**Open the live web app**](https://hospital-readmissions-healthcare-an.vercel.app) · [**View the patient-risk simulator**](https://hospital-readmissions-healthcare-an.vercel.app/simulator.html)
+[**Open the live web app**](https://hospital-readmissions-healthcare-an.vercel.app) · [**View the patient-risk simulator**](https://hospital-readmissions-healthcare-an.vercel.app/simulator.html) · [**View the CMS HRRP notebook on Kaggle**](https://www.kaggle.com/code/nateer/cms-hrrp-hospital-readmissions-analytics)
 
 > Research and portfolio project only. It is not a diagnostic tool and must not be used as the sole basis for patient-care decisions.
 
