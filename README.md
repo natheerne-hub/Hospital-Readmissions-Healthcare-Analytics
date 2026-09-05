@@ -106,6 +106,13 @@ python -m http.server 8000
 
 Open `http://localhost:8000`. To run the prediction API locally, install `requirements.txt` and start the Python API using a Vercel-compatible local workflow.
 
+## Data provenance and permitted reuse
+
+- **Hospital analytics:** [CMS Hospital Readmissions Reduction Program FY 2026](https://data.cms.gov/provider-data/dataset/9n3s-kdb3). The repository stores derived summaries, while the analysis workflow expects the official source CSV.
+- **Patient-model research:** [UCI Diabetes 130-US Hospitals (1999–2008)](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008), DOI: [10.24432/C5230J](https://doi.org/10.24432/C5230J), licensed **CC BY 4.0**.
+- The UCI data are de-identified public research data but include demographic variables that require careful bias, fairness, and subgroup evaluation.
+- Raw source files are not presented as original work. Any Kaggle notebook should cite the official source, preserve attribution, and avoid implying that public availability equals clinical suitability.
+
 ## Data and interpretation safeguards
 
 - Suppressed values such as `Too Few to Report` are preserved as missing/not reported, never converted to zero.
