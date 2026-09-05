@@ -89,6 +89,7 @@ The browser never combines the two datasets into a single inference. Each layer 
 ├── simulator.html, simulator.js       # Research simulator
 ├── api/predict.py                      # Guarded prediction endpoint
 ├── analysis/                           # CMS HRRP analysis workflow
+├── notebooks/                          # Recruiter- and Kaggle-ready notebooks
 ├── dashboard.js                        # Python-dashboard browser renderer
 ├── modeling/                           # UCI training and evaluation pipeline
 ├── runtime/model/                      # Versioned research artifact and manifest
@@ -97,6 +98,12 @@ The browser never combines the two datasets into a single inference. Each layer 
 ├── dashboard/                          # Dashboard implementation notes
 └── tests/                              # API and integrity checks
 ```
+
+### Portfolio notebook
+
+- [CMS HRRP Hospital Readmissions — Kaggle-ready notebook](notebooks/hrrp_hospital_readmissions_kaggle.ipynb)
+
+The notebook keeps the hospital-level HRRP analysis self-contained and does not mix it with the separate patient-level research model.
 
 ## Run locally
 
