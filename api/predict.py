@@ -14,7 +14,7 @@ app = FastAPI()
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT / 'runtime' / 'model' / 'readmission_research_model.joblib'
 MANIFEST_PATH = ROOT / 'runtime' / 'model' / 'readmission_research_model_manifest.json'
-RESEARCH_THRESHOLD = 0.13
+REGISTRY_PATH = ROOT / 'modeling' / 'model_registry.json'
 
 REQUIRED_RESEARCH_FIELDS = [
     'age', 'gender', 'number_inpatient', 'number_emergency',
@@ -64,6 +64,17 @@ def load_bundle():
     return model, manifest
 
 
+@lru_cache(maxsize=1)
+def load_registry_entry():
+    if not REGISTRY_PATH.exists():
+        raise RuntimeError('Model registry is unavailable.')
+    registry = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+    return next(
+        m for m in registry['models']
+        if m['task'] == 'patient_30_day_readmission_probability'
+    )
+
+
 def normalize_payload(payload: dict, manifest: dict) -> pd.DataFrame:
     expected = manifest['input_features']
     unknown = sorted(set(payload) - set(expected) - {'research_acknowledged'})
@@ -100,11 +111,15 @@ def normalize_payload(payload: dict, manifest: dict) -> pd.DataFrame:
 def health_payload():
     try:
         _, manifest = load_bundle()
+        registry_entry = load_registry_entry()
         return {
             'ok': True,
             'model_id': manifest['model_id'],
             'clinical_status': manifest['clinical_status'],
-            'mode': 'research_only'
+            'mode': 'research_only',
+            'public_patient_probability_allowed': bool(
+                registry_entry.get('patient_probability_allowed', False)
+            )
         }
     except Exception as exc:
         raise HTTPException(status_code=503, detail=str(exc))
@@ -119,12 +134,16 @@ def prediction_payload(payload: dict):
 
     try:
         model, manifest = load_bundle()
+        registry_entry = load_registry_entry()
         row = normalize_payload(payload, manifest)
-        probability = float(model.predict_proba(row)[0, 1])
+
+        # Run the packaged model so deployment health and feature compatibility are
+        # exercised, but never expose patient-level output while the registry lock is on.
+        _ = float(model.predict_proba(row)[0, 1])
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f'Inference failed: {exc}')
+        raise HTTPException(status_code=500, detail=f'Inference check failed: {exc}')
 
     entered_global_drivers = [
         {'feature': f, 'value': payload.get(f)}
@@ -132,19 +151,27 @@ def prediction_payload(payload: dict):
         if payload.get(f) not in (None, '')
     ]
 
-    return {
-        'model_id': manifest['model_id'],
-        'research_probability': round(probability, 4),
-        'research_threshold': RESEARCH_THRESHOLD,
-        'threshold_signal': 'above' if probability >= RESEARCH_THRESHOLD else 'below',
-        'clinical_status': manifest['clinical_status'],
-        'public_patient_probability_allowed': False,
-        'entered_global_driver_fields': entered_global_drivers,
-        'interpretation': (
-            'Research estimate only. The threshold signal is for technical demonstration and '
-            'must not be used for diagnosis, treatment, discharge, or autonomous clinical decisions.'
-        )
-    }
+    probability_allowed = bool(registry_entry.get('patient_probability_allowed', False))
+
+    if not probability_allowed:
+        return {
+            'model_id': manifest['model_id'],
+            'prediction_locked': True,
+            'clinical_status': manifest['clinical_status'],
+            'public_patient_probability_allowed': False,
+            'entered_global_driver_fields': entered_global_drivers,
+            'interpretation': (
+                'The packaged research model executed successfully, but patient-level '
+                'probability and threshold outputs are intentionally withheld. External '
+                'validation, calibration review, subgroup assessment, workflow evaluation, '
+                'and governance approval are required before public probability output can be enabled.'
+            )
+        }
+
+    raise HTTPException(
+        status_code=503,
+        detail='Probability output requires a separately reviewed release path.'
+    )
 
 
 @app.get('/')
