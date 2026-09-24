@@ -1,4 +1,4 @@
-# MVP Decision Log — Soliman HealthData AI Readmission Intelligence
+# MVP Decision Log — Suliaman HealthData AI Readmission Intelligence
 
 ## Purpose
 
