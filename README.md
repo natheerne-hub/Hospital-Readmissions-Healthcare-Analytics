@@ -173,7 +173,7 @@ Raw public source data are not presented as original work. Dataset provenance, l
 
 ## Author
 
-**Dr. Natheer Soliman, MD**  
+**Dr. Nather Yunis Suliaman, MD**  
 Medical Doctor · Healthcare & Clinical Data Analytics · Health Informatics · Medical AI
 
 [Portfolio](https://natheerne-hub.github.io/natheersoliman.github.io/) · [GitHub Profile](https://github.com/natheerne-hub) · [Kaggle](https://www.kaggle.com/nateer)
