@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest shap==0.51.0 imbalanced-learn==0.14.2
       - name: Compile Python modules
         run: |
           python -m py_compile analysis/hospital_readmissions_analysis.py
@@ -33,6 +33,8 @@ jobs:
           python -m py_compile modeling/analyze_error_profiles.py
           python -m py_compile modeling/run_feature_ablation.py
           python -m py_compile modeling/benchmark_next_models.py
+          python -m py_compile modeling/compare_imbalance_strategies.py
+          python -m py_compile modeling/explain_with_shap.py
           python -m py_compile api/predict.py
       - name: Validate JSON assets
         run: |
@@ -72,7 +74,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install modeling dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt shap==0.51.0 imbalanced-learn==0.14.2
       - name: Download official UCI dataset
         run: |
           mkdir -p data
@@ -90,6 +92,10 @@ jobs:
         run: python modeling/run_feature_ablation.py
       - name: Benchmark next models
         run: python modeling/benchmark_next_models.py
+      - name: Compare class-imbalance strategies
+        run: python modeling/compare_imbalance_strategies.py
+      - name: Explain packaged model with SHAP
+        run: python modeling/explain_with_shap.py
       - name: Validate generated artifacts
         run: |
           python -m json.tool modeling/artifacts/patient_readmission_metrics.json > /dev/null
@@ -97,6 +103,8 @@ jobs:
           python -m json.tool modeling/artifacts/readmission_error_profiles.json > /dev/null
           python -m json.tool modeling/artifacts/feature_ablation_results.json > /dev/null
           python -m json.tool modeling/artifacts/next_model_benchmark.json > /dev/null
+          python -m json.tool modeling/artifacts/imbalance_strategy_comparison.json > /dev/null
+          python -m json.tool modeling/artifacts/shap_explanations.json > /dev/null
           python - <<'PY'
           import json
           from pathlib import Path
@@ -105,6 +113,8 @@ jobs:
           errors = json.loads(Path('modeling/artifacts/readmission_error_profiles.json').read_text())
           ablation = json.loads(Path('modeling/artifacts/feature_ablation_results.json').read_text())
           bench = json.loads(Path('modeling/artifacts/next_model_benchmark.json').read_text())
+          imbalance = json.loads(Path('modeling/artifacts/imbalance_strategy_comparison.json').read_text())
+          shap_out = json.loads(Path('modeling/artifacts/shap_explanations.json').read_text())
           assert 0 <= metrics['test']['roc_auc'] <= 1
           assert 0 <= metrics['test']['pr_auc'] <= 1
           assert len(metrics['test']['threshold_tradeoff_table']) > 0
@@ -113,6 +123,10 @@ jobs:
           assert len(ablation['experiments']) > 0
           assert len(bench['validation_candidates']) == 6
           assert 0 <= bench['winner_test']['roc_auc'] <= 1
+          assert len(imbalance['validation_candidates']) == 8
+          assert 0 <= imbalance['locked_test']['pr_auc'] <= 1
+          assert len(shap_out['global_importance']) > 0
+          assert len(shap_out['example_encounters']) > 0
           print(json.dumps({'selected_winner': bench['selected_winner'], 'winner_test': bench['winner_test']}, indent=2))
           PY
       - name: Upload patient modeling evidence
@@ -125,5 +139,7 @@ jobs:
             modeling/artifacts/readmission_error_profiles.json
             modeling/artifacts/feature_ablation_results.json
             modeling/artifacts/next_model_benchmark.json
+            modeling/artifacts/imbalance_strategy_comparison.json
+            modeling/artifacts/shap_explanations.json
           if-no-files-found: error
           retention-days: 14
