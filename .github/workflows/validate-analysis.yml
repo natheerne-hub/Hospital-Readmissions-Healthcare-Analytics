@@ -35,6 +35,7 @@ jobs:
           python -m py_compile modeling/benchmark_next_models.py
           python -m py_compile modeling/compare_imbalance_strategies.py
           python -m py_compile modeling/explain_with_shap.py
+          python -m py_compile modeling/tune_and_calibrate_model.py
           python -m py_compile api/predict.py
       - name: Validate JSON assets
         run: |
@@ -96,6 +97,8 @@ jobs:
         run: python modeling/compare_imbalance_strategies.py
       - name: Explain packaged model with SHAP
         run: python modeling/explain_with_shap.py
+      - name: Tune, calibrate and bootstrap-compare the model
+        run: python modeling/tune_and_calibrate_model.py
       - name: Validate generated artifacts
         run: |
           python -m json.tool modeling/artifacts/patient_readmission_metrics.json > /dev/null
@@ -105,6 +108,7 @@ jobs:
           python -m json.tool modeling/artifacts/next_model_benchmark.json > /dev/null
           python -m json.tool modeling/artifacts/imbalance_strategy_comparison.json > /dev/null
           python -m json.tool modeling/artifacts/shap_explanations.json > /dev/null
+          python -m json.tool modeling/artifacts/tuned_calibrated_model.json > /dev/null
           python - <<'PY'
           import json
           from pathlib import Path
@@ -115,6 +119,7 @@ jobs:
           bench = json.loads(Path('modeling/artifacts/next_model_benchmark.json').read_text())
           imbalance = json.loads(Path('modeling/artifacts/imbalance_strategy_comparison.json').read_text())
           shap_out = json.loads(Path('modeling/artifacts/shap_explanations.json').read_text())
+          tuned = json.loads(Path('modeling/artifacts/tuned_calibrated_model.json').read_text())
           assert 0 <= metrics['test']['roc_auc'] <= 1
           assert 0 <= metrics['test']['pr_auc'] <= 1
           assert len(metrics['test']['threshold_tradeoff_table']) > 0
@@ -127,6 +132,9 @@ jobs:
           assert 0 <= imbalance['locked_test']['pr_auc'] <= 1
           assert len(shap_out['global_importance']) > 0
           assert len(shap_out['example_encounters']) > 0
+          assert 0 <= tuned['locked_test']['tuned_calibrated']['roc_auc'] <= 1
+          assert tuned['calibration']['selected'] in {'uncalibrated', 'sigmoid', 'isotonic'}
+          assert isinstance(tuned['robust_improvement'], bool)
           print(json.dumps({'selected_winner': bench['selected_winner'], 'winner_test': bench['winner_test']}, indent=2))
           PY
       - name: Upload patient modeling evidence
@@ -141,5 +149,6 @@ jobs:
             modeling/artifacts/next_model_benchmark.json
             modeling/artifacts/imbalance_strategy_comparison.json
             modeling/artifacts/shap_explanations.json
+            modeling/artifacts/tuned_calibrated_model.json
           if-no-files-found: error
           retention-days: 14
