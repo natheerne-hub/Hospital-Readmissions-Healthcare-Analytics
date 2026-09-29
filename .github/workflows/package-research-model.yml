@@ -46,7 +46,7 @@ jobs:
           from pathlib import Path
           m=json.loads(Path('modeling/artifacts/readmission_research_model_manifest.json').read_text())
           assert m['public_patient_probability_allowed'] is False
-          assert m['model_id']=='uci-diabetes-histgb-research-v2'
+          assert m['model_id']=='uci-diabetes-readmission-hgb-v2'
           PY
       - name: Upload packaged model bundle
         uses: actions/upload-artifact@v4

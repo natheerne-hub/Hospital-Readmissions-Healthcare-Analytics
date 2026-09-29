@@ -107,3 +107,21 @@ python modeling/repair_model_selection.py
 python modeling/benchmark_xgboost_challenger.py
 python modeling/bootstrap_challenger_comparison.py
 ```
+
+## Class-imbalance strategies
+
+`compare_imbalance_strategies.py` benchmarks four ways of handling the ~11% early-readmission prevalence for both logistic regression and HistGradientBoosting: no adjustment, `class_weight="balanced"`, SMOTE, and random undersampling. Resampling runs inside the pipeline on training data only, selection uses validation PR-AUC, and the locked test set is scored once for the selected candidate.
+
+Reweighting and resampling push predicted probabilities above the observed prevalence, so the Brier score and mean predicted probability are reported for every candidate. Any such model must be recalibrated before its output is read as risk.
+
+## SHAP explanations
+
+`explain_with_shap.py` explains the exact packaged runtime model (`runtime/model/`) on locked test encounters with `shap.TreeExplainer`. It writes global importance (mean |SHAP| per original feature, one-hot columns summed back) and, for sample encounters, the top factors raising and lowering the model's output. `ReadmissionExplainer.explain_encounter` gives the same breakdown for a single encounter.
+
+SHAP describes how the model uses its inputs, not clinical causes, and encounter-level explanations stay research output while patient probability display is locked.
+
+```bash
+pip install shap==0.51.0 imbalanced-learn==0.14.2
+python modeling/compare_imbalance_strategies.py
+python modeling/explain_with_shap.py
+```
