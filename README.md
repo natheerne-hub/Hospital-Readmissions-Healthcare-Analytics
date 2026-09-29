@@ -99,6 +99,27 @@ The false-discovery rate is **81.1%**. For that reason, the project does not pre
 
 See the [Model Card](docs/MODEL_CARD.md), [Final Model Decision](docs/FINAL_MODEL_DECISION.md), and [Model Improvement Audit](docs/MODEL_IMPROVEMENT_AUDIT.md) for the detailed evidence and decision trail.
 
+### Tuning and calibration — September 2026
+
+`modeling/tune_and_calibrate_model.py` tested whether a hyperparameter search, calibrated probabilities, and patient-history features could beat the registered model. Every choice was made on training cross-validation or validation data; the locked test set was scored once. Both models below were trained on the same training patients and scored on the same **19,816 eligible test encounters**, so these figures are lower than the headline table, which covers all discharges and a train+validation fit.
+
+| Locked test | Registered model | Tuned + calibrated |
+|---|---:|---:|
+| ROC-AUC | 0.6770 | 0.6819 |
+| PR-AUC | 0.2280 | 0.2249 |
+| Brier score | 0.0922 | 0.0921 |
+| Expected calibration error | 0.0075 | **0.0041** |
+| Calibration slope (ideal 1.0) | 1.147 | **1.056** |
+| Sensitivity / precision at threshold 0.15 | 0.416 / 0.213 | 0.425 / 0.213 |
+
+What changed:
+
+- **Patient-history features:** earlier encounters of the same patient in the dataset, and how many of those were followed by an early readmission. Only strictly earlier encounters are counted. This assumes `encounter_id` follows admission order. These features raised cross-validated ROC-AUC by about 0.006 and PR-AUC by about 0.002, which was the largest gain found.
+- **Hyperparameter search:** 25 random HistGradientBoosting configurations plus the registered one, scored by 4-fold patient-grouped cross-validation. None clearly beat the registered parameters: the best cross-validated PR-AUC was 0.2216, against 0.2212 for the registered parameters with the same features.
+- **Calibration:** Platt (sigmoid) scaling was selected on cross-fitted validation Brier score, ahead of isotonic regression and no calibration. It brought the calibration slope close to 1 and nearly halved the calibration error, so predicted risk is within about one percentage point of the observed rate in every decile.
+
+**Decision: the registered model is not replaced.** A paired bootstrap (1,000 resamples) put the ROC-AUC gain at +0.0048 (95% CI −0.0006 to +0.0101), the PR-AUC change at −0.0031 (−0.0099 to +0.0038), and the Brier change at −0.0001 (−0.0004 to +0.0003). None of these intervals clears zero. On this dataset, discrimination appears close to the ceiling of the available features. The calibration step is still worth keeping for any future model, because it makes the probabilities trustworthy as risk estimates. Full output: `modeling/artifacts/tuned_calibrated_model.json` (generated in CI).
+
 ## What I demonstrated
 
 This repository is designed to show more than notebook execution. It demonstrates:

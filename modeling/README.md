@@ -125,3 +125,14 @@ pip install shap==0.51.0 imbalanced-learn==0.14.2
 python modeling/compare_imbalance_strategies.py
 python modeling/explain_with_shap.py
 ```
+
+## Tuning, calibration and patient history
+
+`tune_and_calibrate_model.py` adds two patient-history features: strictly earlier encounters of the same patient, and how many of those were followed by an early readmission. It assumes `encounter_id` follows admission order. The script then runs a randomized HistGradientBoosting search with patient-grouped cross-validation on the training split, and chooses sigmoid, isotonic or no calibration by cross-fitted Brier score on validation. It scores the locked test once and compares the result with the registered model using a paired bootstrap. The artifact reports ECE, calibration slope and intercept, and reliability deciles.
+
+The September 2026 run did not promote the tuned model; see [`docs/MODEL_IMPROVEMENT_AUDIT.md`](../docs/MODEL_IMPROVEMENT_AUDIT.md). `TUNE_SEARCH_ITERATIONS`, `TUNE_CV_FOLDS` and `TUNE_BOOTSTRAP_RESAMPLES` shrink the run for quick local checks.
+
+```bash
+python modeling/tune_and_calibrate_model.py
+```
+

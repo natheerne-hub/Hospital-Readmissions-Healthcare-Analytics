@@ -52,3 +52,20 @@ The registered HistGradientBoosting model remains the public research artifact. 
 
 No result in this audit establishes clinical validity.
 
+## September 2026 tuning and calibration audit
+
+`modeling/tune_and_calibrate_model.py` added patient-history features (strictly earlier encounters per patient and their early-readmission count), a 25-candidate randomized search with 4-fold patient-grouped cross-validation, and calibration chosen by cross-fitted Brier score on validation (Platt scaling selected).
+
+| Locked test (eligible, matched) | ROC-AUC | PR-AUC | Brier | ECE | Calibration slope |
+|---|---:|---:|---:|---:|---:|
+| Registered baseline | 0.6770 | 0.2280 | 0.0922 | 0.0075 | 1.147 |
+| Tuned + history + Platt | 0.6819 | 0.2249 | 0.0921 | 0.0041 | 1.056 |
+
+| Delta: tuned − registered | Point estimate | 95% CI |
+|---|---:|---:|
+| ROC-AUC | +0.00484 | −0.00060 to +0.01009 |
+| PR-AUC | −0.00309 | −0.00994 to +0.00381 |
+| Brier score | −0.00008 | −0.00038 to +0.00025 |
+
+**Decision: do not promote.** Calibration improved clearly, but no discrimination or Brier interval excludes zero. The search did not beat the registered hyperparameters, so further tuning on these features is unlikely to help. New predictors, such as richer diagnosis and comorbidity data or data from a new source, are the remaining lever.
+
