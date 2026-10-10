@@ -44,8 +44,21 @@ jobs:
           python -m json.tool modeling/model_registry.json > /dev/null
       - name: Run portfolio integrity tests
         run: pytest -q tests
-      - name: Validate MVP JavaScript syntax
-        run: node --check mvp/app.js
+      - name: Validate JavaScript syntax
+        run: |
+          for f in app.js dashboard.js simulator.js mvp/app.js; do node --check "$f"; done
+          # Inline <script> blocks are not covered by the files above.
+          python - <<'PY'
+          import re, subprocess, tempfile
+          from pathlib import Path
+          for page in ['index.html', 'simulator.html', 'mvp/index.html']:
+              html = Path(page).read_text(encoding='utf-8')
+              for i, code in enumerate(re.findall(r'<script>(.*?)</script>', html, re.S)):
+                  with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as tmp:
+                      tmp.write(code)
+                  subprocess.run(['node', '--check', tmp.name], check=True)
+                  print(f'{page} inline script {i}: ok')
+          PY
       - name: Guard against invented patient metrics
         run: |
           if grep -R -E 'ROC-AUC: [0-9]|PR-AUC: [0-9]|Accuracy: [0-9]' mvp/; then
