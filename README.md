@@ -162,10 +162,33 @@ The browser never combines the two datasets into one inference. Each layer retai
 ├── data/                                # Documentation and derived web assets
 ├── docs/                                # Model card, decisions, architecture, audits
 ├── dashboard/                           # Dashboard implementation notes
-└── tests/                               # API and integrity checks
+├── mvp/                                 # Earlier standalone MVP of the dashboard
+├── tests/                               # API and integrity checks
+└── .github/workflows/                   # CI: checks, model training and packaging
 ```
 
-## Reproduce the hospital dashboard
+## Run it yourself
+
+Requires Python 3.11+ (CI uses 3.11). Node is only needed for the JavaScript syntax check.
+
+### 1. Install
+
+```bash
+git clone https://github.com/natheerne-hub/Hospital-Readmissions-Healthcare-Analytics.git
+cd Hospital-Readmissions-Healthcare-Analytics
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt pytest
+```
+
+### 2. Run the checks
+
+```bash
+pytest -q tests
+```
+
+The tests check the published dashboard figures against the HRRP summary, confirm the patient-probability lock is still on in the registry, API and simulator, and check the SHAP and calibration code against the packaged model.
+
+### 3. Rebuild and view the hospital dashboard
 
 ```bash
 python analysis/build_python_dashboard.py
@@ -175,6 +198,29 @@ python -m http.server 8000
 Then open `http://localhost:8000`.
 
 The build script regenerates `data/python_dashboard.json` and its MVP mirror from the verified HRRP summary. JavaScript renders the published output rather than silently recalculating the healthcare metrics in the browser.
+
+The static server does not run the prediction API, so the simulator page shows "Model check unavailable" locally. On Vercel, `api/predict.py` serves `/api/predict`. To try the API on its own:
+
+```bash
+pip install uvicorn
+uvicorn api.predict:app --port 8001
+curl 'http://localhost:8001/api/predict?demo=1'
+```
+
+The response confirms the model ran and that patient-level probability output is withheld.
+
+### 4. Retrain and evaluate the patient model
+
+The UCI dataset is not stored in the repository. Download it, then run the pipeline:
+
+```bash
+pip install -r modeling/requirements-research.txt
+curl -L 'https://archive.ics.uci.edu/static/public/296/diabetes+130-us+hospitals+for+years+1999-2008.zip' -o uci.zip
+unzip -o uci.zip -d uci && cp uci/diabetic_data.csv data/diabetic_data.csv
+python modeling/train_patient_readmission.py
+```
+
+Each later stage (risk drivers, error profiles, ablation, model benchmark, class imbalance, SHAP, tuning and calibration) is a separate script in `modeling/`, run in the order listed in `.github/workflows/validate-analysis.yml`. Results are written to `modeling/artifacts/`. See [modeling/README.md](modeling/README.md) for what each step does.
 
 ## Data provenance
 
